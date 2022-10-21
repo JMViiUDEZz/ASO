@@ -1,0 +1,18 @@
+1.Introducir 2 tarjetas de red, una NAT y otra en la red del servidor
+2.Configurar la interfaz del servidor con una ip dentro del rango
+3.Configurar /etc/hostname con el nombre correcto del servidor.
+4.Configurar /etc/hosts con los nombres adecuados para el servidor.
+
+###################################################
+######-----Instalar ldap y slap-----###############
+###################################################
+apt install slapd ldap-utils -y
+    1)Introducir la contraseña del administrador
+
+###################################################
+######-----Iniciar instalacion-----################
+###################################################
+dpkg-reconfigure slapd
+    1)Introducir nombre DNS <ies.local>
+    2)Introducir nombre de la organizacion <Company>
+    3)Introducir 

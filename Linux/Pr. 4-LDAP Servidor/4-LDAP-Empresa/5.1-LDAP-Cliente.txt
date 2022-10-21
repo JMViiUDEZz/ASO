@@ -1,0 +1,16 @@
+###################################################
+######-----Instalar ldap en clientes-----##########
+###################################################
+apt install libnss-ldap
+    1) ldap://Ip del servidor
+    2) nombre del dominio --> dc=ies,dc=local
+    3) Version 3
+    4) Yes
+    5) No
+    6) cn=admin,dc=ies,dc=local
+    7) <contraseña>
+
+###################################################
+####--En caso de que necesitemos reconfigurar--####
+###################################################
+dpkg-reconfigure ldap-auth-config

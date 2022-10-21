@@ -1,0 +1,10 @@
+# * CLIENTE * #
+###################################################
+##--Dentro del cliente creamos usuarios con LAM--##
+###################################################
+    1) Create user
+    2) Asignar nombre
+    3) Asignar apellido
+    4) Asignar grupo 
+    5) Asignar home directory
+    6) Asignar contraseña
