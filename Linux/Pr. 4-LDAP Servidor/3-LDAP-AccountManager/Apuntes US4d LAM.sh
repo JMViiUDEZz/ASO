@@ -7,7 +7,7 @@ apt install ldap-account-manager -y
 ###################################################
 ####-----------Pasos a seguir-----------###########
 ###################################################
-#	1) Abrir http://<ip servidor>/lam
+#	 1) Abrir http://<ip servidor>/lam
 #    2) Lam Configuration --> Arriba derecha
 #    3) Edit general settings
 #    4) Master password --> lam
