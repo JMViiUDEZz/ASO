@@ -1,4 +1,4 @@
-1.Introducir 2 tarjetas de red, una NAT y otra en la red del servidor
+1.Introducir 2 tarjetas de red, una NAT y otra LAN en la red del servidor (en mi caso, llamada ASO)
 2.Configurar la interfaz del servidor con una ip dentro del rango
 3.Configurar /etc/hostname con el nombre correcto del servidor.
 4.Configurar /etc/hosts con los nombres adecuados para el servidor.

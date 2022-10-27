@@ -26,9 +26,9 @@ echo cn: directores >> /home/ldapPlantilla.ldif
 echo gidNumber: 5001 >> /home/ldapPlantilla.ldif
 
 echo '' >> /home/ldapPlantilla.ldif
-echo dn: cn=recursosHumanos,ou=grupos,dc=ies,dc=local >> /home/ldapPlantilla.ldif
+echo dn: cn=administracion,ou=grupos,dc=ies,dc=local >> /home/ldapPlantilla.ldif
 echo objectclass: posixGroup >> /home/ldapPlantilla.ldif
-echo cn: recursosHumanos >> /home/ldapPlantilla.ldif
+echo cn: administracion >> /home/ldapPlantilla.ldif
 echo gidNumber: 5002 >> /home/ldapPlantilla.ldif
 
 echo '' >> /home/ldapPlantilla.ldif
@@ -40,10 +40,24 @@ echo gidNumber: 5003 >> /home/ldapPlantilla.ldif
 
 echo '' >> /home/ldapPlantilla.ldif
 
+echo dn: cn=ventas,ou=grupos,dc=ies,dc=local >> /home/ldapPlantilla.ldif
+echo objectclass: posixGroup >> /home/ldapPlantilla.ldif
+echo cn: ventas >> /home/ldapPlantilla.ldif
+echo gidNumber: 5004 >> /home/ldapPlantilla.ldif
+
+echo '' >> /home/ldapPlantilla.ldif
+
+echo dn: cn=recursosHumanos,ou=grupos,dc=ies,dc=local >> /home/ldapPlantilla.ldif
+echo objectclass: posixGroup >> /home/ldapPlantilla.ldif
+echo cn: recursosHumanos >> /home/ldapPlantilla.ldif
+echo gidNumber: 5005 >> /home/ldapPlantilla.ldif
+
+echo '' >> /home/ldapPlantilla.ldif
+
 echo dn: cn=marketing,ou=grupos,dc=ies,dc=local >> /home/ldapPlantilla.ldif
 echo objectclass: posixGroup >> /home/ldapPlantilla.ldif
 echo cn: marketing >> /home/ldapPlantilla.ldif
-echo gidNumber: 5004 >> /home/ldapPlantilla.ldif
+echo gidNumber: 5006 >> /home/ldapPlantilla.ldif
 
 
 

@@ -1,2 +1,2 @@
-1. Introducir 2 tarjetas de red, una NAT y otra en la red del servidor
-2. Configurar la interfaz del servidor con una ip dentro del rango
+1.Introducir 2 tarjetas de red, una NAT y otra LAN en la red del servidor (en mi caso, llamada ASO)
+2.Configurar la interfaz del servidor con una ip dentro del rango
