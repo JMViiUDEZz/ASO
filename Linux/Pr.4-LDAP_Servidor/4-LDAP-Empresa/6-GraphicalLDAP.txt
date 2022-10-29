@@ -10,14 +10,14 @@ apt install ldap-account-manager -y
 ###################################################
 ####----Entrar en el enlace para configurar----####
 ###################################################
-    1) Abrir http://<ip servidor>/lam
+    1) Abrir http://<ip servidor>/lam (en mi caso, http://192.168.1.100/lam)
     2) Lam Configuration --> Arriba derecha
     3) Edit general settings
     4) Master password --> lam
     5) Change master password --> <Nueva contraseña>
     6) Editar perfiles de servidor
-    7) Sufijo del arbol <dc=ies,dc=local>
-    8) Security settings <cn=admin,dc=ies,dc=local> 
+    7) Sufijo del arbol <dc=asir,dc=local>
+    8) Security settings <cn=admin,dc=asir,dc=local> 
     9) Cambiar contraseña de perfil
     10) Tipos de cuentas
     11) Configurar usuarios y grupos

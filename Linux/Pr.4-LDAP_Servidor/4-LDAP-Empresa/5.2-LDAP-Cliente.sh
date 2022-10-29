@@ -58,3 +58,5 @@ echo 'session optional        pam_mkhomedir.so' skel=/etc/skel umask=077 >> /etc
 ####-------Reiniciar y comprobar que funciona----##
 ###################################################
 echo 'REINICIA EL PC'
+
+sudo shutdown -r now

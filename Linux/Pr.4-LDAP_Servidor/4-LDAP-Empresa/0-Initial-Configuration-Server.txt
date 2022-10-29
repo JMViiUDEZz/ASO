@@ -1,18 +1,49 @@
-1.Introducir 2 tarjetas de red, una NAT y otra LAN en la red del servidor (en mi caso, llamada ASO)
-2.Configurar la interfaz del servidor con una ip dentro del rango
-3.Configurar /etc/hostname con el nombre correcto del servidor.
-4.Configurar /etc/hosts con los nombres adecuados para el servidor.
-
-###################################################
-######-----Instalar ldap y slap-----###############
-###################################################
-apt install slapd ldap-utils -y
-    1)Introducir la contraseña del administrador
-
-###################################################
-######-----Iniciar instalacion-----################
-###################################################
+1.Introducir 2 tarjetas de red; una NAT y otra LAN (en mi caso, llamada ASO).
+2.Actualizar índice de paquetes:
+sudo apt update -y
+3.Actualizar los paquetes instalados:
+sudo apt upgrade –y
+4.Configurar la interfaz del servidor con una ip dentro del rango:
+sudo echo '# Ejemplo de configuración
+network:
+  ethernets:
+    eth0:
+      dhcp4: true
+    eth1:
+      addresses: [192.168.1.100/24]
+      dhcp4: no
+  version: 2' > /etc/netplan/00-installer-config.yaml
+5.Aplicar cambios con la orden:
+sudo netplan apply
+6.Cambiar el nombre del servidor a u-server:
+sudo hostnamectl set-hostname u-server
+sudo echo u-server > /etc/hostname
+7.Modificar el fichero cloud.cfg para no perder el nombre al reiniciar:
+sudo echo 'preserve_hostname: true' > /etc/cloud/cloud.cfg
+8.Modificar el fichero de hosts:
+sudo echo '127.0.1.1 u-server' >> /etc/hosts
+9.Establecer la zona horaria:
+sudo timedatectl set-timezone Europe/Madrid
+10.Activamos sincronización NTP: 
+sudo timedatectl set-ntp on
+11.Instalar y configurar OpenSSH para poder administrar el servidor desde un ordenador remoto:
+sudo apt install openssh-client -y
+sudo apt install openssh-server -y
+sudo echo 'Port 22
+AllowUsers jose
+PermitRootLogin no
+Banner /etc/issue.net' > /etc/ssh/sshd_config
+sudo systemctl restart ssh
+12.Instalar Duplicity para poder programar copias de seguridad:
+sudo apt install duplicity -y
+13.Instalar ldap y slap con el siguiente comando:
+sudo apt install slapd ldap-utils –y
+14.Iniciar instalación:
 dpkg-reconfigure slapd
-    1)Introducir nombre DNS <ies.local>
-    2)Introducir nombre de la organizacion <Company>
-    3)Introducir 
+a.Introducir nombre DNS <asir.local>
+b.Introducir nombre de la organización <ASIR/Administración de Sistemas Informáticos en Red>
+c.Introducir contraseña del administrador 
+15.Comprobar que se ha instalado correctamente:
+sudo systemctl status slapd
+ldapsearch -x -LLL -b dc=asir,dc=local dn
+slapcat

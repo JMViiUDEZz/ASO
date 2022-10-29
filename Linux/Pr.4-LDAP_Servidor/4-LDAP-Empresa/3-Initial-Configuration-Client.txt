@@ -1,2 +1,6 @@
-1.Introducir 2 tarjetas de red, una NAT y otra LAN en la red del servidor (en mi caso, llamada ASO)
-2.Configurar la interfaz del servidor con una ip dentro del rango
+1.Introducir 2 tarjetas de red; una NAT y otra LAN (en mi caso, llamada ASO).
+2.Actualizar índice de paquetes:
+sudo apt update -y
+3.Actualizar los paquetes instalados:
+sudo apt upgrade –y
+4.Configurar la interfaz del cliente con una ip dentro del rango en modo gráfico.
