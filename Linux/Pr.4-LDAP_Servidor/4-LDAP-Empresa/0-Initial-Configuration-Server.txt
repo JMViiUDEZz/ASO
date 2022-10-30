@@ -7,9 +7,9 @@ sudo apt upgrade –y
 sudo echo '# Ejemplo de configuración
 network:
   ethernets:
-    eth0:
+    ens33:
       dhcp4: true
-    eth1:
+    ens37:
       addresses: [192.168.1.100/24]
       dhcp4: no
   version: 2' > /etc/netplan/00-installer-config.yaml
@@ -41,9 +41,9 @@ sudo apt install slapd ldap-utils –y
 14.Iniciar instalación:
 dpkg-reconfigure slapd
 a.Introducir nombre DNS <asir.local>
-b.Introducir nombre de la organización <ASIR/Administración de Sistemas Informáticos en Red>
+b.Introducir nombre de la organización <Administración de Sistemas Informáticos en Red>
 c.Introducir contraseña del administrador 
 15.Comprobar que se ha instalado correctamente:
-sudo systemctl status slapd
+sudo service status slapd
 ldapsearch -x -LLL -b dc=asir,dc=local dn
 slapcat
