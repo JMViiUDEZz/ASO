@@ -1,8 +1,9 @@
-# * Script que al pasarle como parámetro un archivo de texto ordene las líneas
-# * de texto ascendentemente al pasarle una 'A' como segundo parámetro o 
-# * descendentemente al pasarle una 'Z' como segundo parámetro
+# 10) Escribir un script que al pasarle como parámetro un archivo de texto, 
+# ordene las líneas de texto ascendentemente al pasarle una "A" 
+# como segundo parámetro o descendentemente al pasarle una "Z".
 
 #!/bin/bash
+
 if [ $# -eq 2 ]
  then
     if [ -f $1 ]
