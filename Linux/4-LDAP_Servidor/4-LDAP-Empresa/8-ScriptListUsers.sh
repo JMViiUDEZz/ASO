@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# * SCRIPT PARA LISTAR USUARIOS CON NOMBRE, APELLIDOS, TELÉFONO Y CORREO * #
-
-#! V1
+# * SCRIPT PARA BUSCAR USUARIOS Y GENERAR UN LISTADO CON SU NOMBRE, APELLIDOS, TELÉFONO Y CORREO ELECTRÓNICO * #
 
 echo "INFORME DE USUARIOS"
 
@@ -15,30 +13,3 @@ generarListado() {
 generarListado
 
 echo ""
-
-#! V2
-
-echo ""
-echo ""
-
-echo "INFORME DE USUARIOS"
-
-echo ""
-
-generarListado() {
-    listadoOriginal=`ldapsearch -xLLL -b "dc=asir,dc=local" "(objectClass=Person)" telephoneNumber mail sn givenName`
-    conNombre="${listadoOriginal//givenName/Nombre}"
-    conApellido="${conNombre//sn/Apellidos}"
-    conTelefono="${conApellido//telephoneNumber/Telefono}"
-    conEmail="${conTelefono//mail/Email}"
-
-    echo "$conEmail" > conEmail.txt
-
-    sed '/dn:/d' conEmail.txt
-}
-
-generarListado
-
-echo ""
-
-
