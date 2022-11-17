@@ -1,7 +1,7 @@
 ###################################################
 ######-----Instalar ldap en clientes-----##########
 ###################################################
-apt install libnss-ldap -y
+sudo apt install libnss-ldap ldap-utils -y
     1) ldap://Ip del servidor (en mi caso, ldap://192.168.1.100)
     2) nombre del dominio --> dc=asir,dc=local
     3) Version 3
