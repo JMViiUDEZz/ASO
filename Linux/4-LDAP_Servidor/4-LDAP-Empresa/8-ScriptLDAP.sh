@@ -121,20 +121,11 @@ addUser() {
 	read -p "Nombre: " NOMBRE
 	read -p "Apellido: " APELLIDO
 	read -p "Grupo principal (`getAllGroups`): " GRUPO
-	# read -p "Descripcion: " DESCRIPCION
-	# read -p "Movil: " MOVIL
-	# read -p "Departamento: " DEPARTAMENTO
-	# read -p "Número empleado: " NUMERO_EMPLEADO
-	# read -p "Iniciales: " INICIALES
 	GRUPO_ID=`getGroupId $GRUPO`
 	USUARIO_ID=`getNextUid`
-	# # fechas
-	# SECS=`date +%s`
-        # HOY=`echo $(($SECS/(3600*24)))`
-        # UNANIOMAS=$(($HOY+365))
 	# Crear usuario
 	ldapadd $ARGS << EOF
-	dn: cn= $NOMBRE $APELLIDO,ou=usuarios,$DC
+	dn: uid=$USUARIO,ou=usuarios,$DC
 	objectClass: posixAccount
 	objectClass: inetOrgPerson
 	objectClass: organizationalPerson
@@ -150,19 +141,7 @@ addUser() {
 	givenName: $NOMBRE
 	mail: $USUARIO@$DOMAIN
 EOF
-	# objectClass: shadowAccount
-	# userPassword: {CRYPT}*
-	# shadowLastChange: $HOY
-	# shadowExpire: $UNANIOMAS
-	
-	# description: $DESCRIPCION
-	# moblie: $MOVIL
-	# employeeType: Empleado
-	# businessCategory: $DEPARTAMENTO
-	# employeeNumber: $NUMERO_EMPLEADO
-	# initials: $INICIALES
-	
-	# asignar clave al usuario
+	# Asignar clave al usuario
 	modPasswd $USUARIO
 }
 
@@ -201,20 +180,6 @@ modPasswd() {
 				break
 			fi
 		done
-		# # actualizar fecha de cambio de clave y expiracion de la cuenta
-		# SECS=`date +%s`
-	        # HOY=`echo $(($SECS/(3600*24)))`
-        	# UNANIOMAS=$(($HOY+365))
-		# ldapmodify $ARGS << EOF
-		# dn: uid=$1,ou=usuarios,$DC
-		# changetype: modify
-		# replace: shadowLastChange
-		# shadowLastChange: $HOY
-		# dn: uid=$1,ou=usuarios,$DC
-		# changetype: modify
-		# replace: shadowExpire
-		# shadowExpire: $UNANIOMAS
-# EOF
 		# Cambiar clave
 		ldappasswd $ARGS "uid=$1,ou=usuarios,$DC" -s "$PASSWORD"
 	fi
