@@ -121,11 +121,11 @@ addUser() {
 	read -p "Nombre: " NOMBRE
 	read -p "Apellido: " APELLIDO
 	read -p "Grupo principal (`getAllGroups`): " GRUPO
-	read -p "Descripcion: " DESCRIPCION
-	read -p "Movil: " MOVIL
-	read -p "Departamento: " DEPARTAMENTO
-	read -p "Número empleado: " NUMERO_EMPLEADO
-	read -p "Iniciales: " INICIALES
+	# read -p "Descripcion: " DESCRIPCION
+	# read -p "Movil: " MOVIL
+	# read -p "Departamento: " DEPARTAMENTO
+	# read -p "Número empleado: " NUMERO_EMPLEADO
+	# read -p "Iniciales: " INICIALES
 	GRUPO_ID=`getGroupId $GRUPO`
 	USUARIO_ID=`getNextUid`
 	# # fechas
@@ -134,7 +134,7 @@ addUser() {
         # UNANIOMAS=$(($HOY+365))
 	# Crear usuario
 	ldapadd $ARGS << EOF
-	dn: uid=$USUARIO,ou=usuarios,$DC
+	dn: cn= $NOMBRE $APELLIDO,ou=usuarios,$DC
 	objectClass: posixAccount
 	objectClass: inetOrgPerson
 	objectClass: organizationalPerson
@@ -145,20 +145,22 @@ addUser() {
 	cn: $NOMBRE $APELLIDO
 	uidNumber: $USUARIO_ID
 	gidNumber: $GRUPO_ID
-	description: $DESCRIPCION
+	userPassword: {CRYPT}*
 	sn: $APELLIDO
 	givenName: $NOMBRE
 	mail: $USUARIO@$DOMAIN
-	moblie: $MOVIL
-	employeeType: Empleado
-	businessCategory: $DEPARTAMENTO
-	employeeNumber: $NUMERO_EMPLEADO
-	initials: $INICIALES
 EOF
 	# objectClass: shadowAccount
 	# userPassword: {CRYPT}*
 	# shadowLastChange: $HOY
 	# shadowExpire: $UNANIOMAS
+	
+	# description: $DESCRIPCION
+	# moblie: $MOVIL
+	# employeeType: Empleado
+	# businessCategory: $DEPARTAMENTO
+	# employeeNumber: $NUMERO_EMPLEADO
+	# initials: $INICIALES
 	
 	# asignar clave al usuario
 	modPasswd $USUARIO
