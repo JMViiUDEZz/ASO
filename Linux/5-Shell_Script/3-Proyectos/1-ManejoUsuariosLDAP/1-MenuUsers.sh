@@ -49,38 +49,28 @@ getOptions
 read -p "Introduce una opción: " option
 
 clear
-# Bucle de permanecer en el menú hasta que el usuario introduzca la opción 3
-while [[ ${option} != 3 ]]
-do
-clear
-    # Comprobar que ha introducido el usuario
-    case ${option} in
-        1)
-            # Si el usuario introduce la opción 1, comprobaremos que el archivo de importación introducido en el primer parámetro existe			
-			if [ -f $1 ]; then
-                bash 1.1-ImportUsers.sh $1
-            else
-                echo "El archivo de importacion no existe"
-            fi
-        ;;
-        2)
-            # Si el usuario introduce la opción 2, crearemos un archivo con los usuarios del sistema y su grupo
-            bash 1.2-ExportUsers.sh
-        ;;
-		3)
-            # Si el usuario introduce la opción 3, se saldrá del script
-			echo "Has salido del programa"
-			sleep 2
-			exit
-        ;;
-        *)
-            # En caso de q el usuario introduzca una opción no válida, se mostrará lo siguiente
-            echo "Opción no válida"
-        ;;
-    esac
-
-    clear
-    # Volvemos a mostrar las opciones del menú
-    getOptions
-    read -p "Introduce una nueva opción: " option    
-done
+# Comprobar que ha introducido el usuario
+case ${option} in
+    1)
+        # Si el usuario introduce la opción 1, comprobaremos que el archivo de importación introducido en el primer parámetro existe			
+		if [ -f $1 ]; then
+            sh 1.1-ImportUsers.sh $1
+        else
+            echo "El archivo de importacion no existe"
+        fi
+    ;;
+    2)
+        # Si el usuario introduce la opción 2, crearemos un archivo con los usuarios del sistema y su grupo
+        sh 1.2-ExportUsers.sh
+    ;;
+	3)
+        # Si el usuario introduce la opción 3, se saldrá del script
+		echo "Has salido del programa"
+		sleep 2
+		exit
+    ;;
+    *)
+        # En caso de q el usuario introduzca una opción no válida, se mostrará lo siguiente
+        echo "Opción no válida"
+    ;;
+esac
