@@ -4,37 +4,6 @@
 # Descripcion: Realizar un conjunto de scripts con la finalidad de poder importar y exportar usuarios 
 # desde archivos CSV (valores separados por comas) a un directorio OpenLDAP y viceversa.
 
-clear
-# Comprobar si ya existe un archivo de exportación y eliminarlo en caso positivo
-if [ -f usersExported.txt ]; then
-    rm usersExported.txt
-fi
-
-# Bucle de todos los usuarios 
-for linea in $(getAllUsers)
-do
-	# uid: $USUARIO
-	# gidNumber: $GRUPO_ID
-	# sn: $APELLIDO
-	# givenName: $NOMBRE
-	# GRUPO=`getGroupCn $GRUPO_ID`
-
-    # Guardar el UID del usuario en una variable
-    USUARIO=$(echo $linea | cut -d ": " -f 2)
-    # Guardar el GID del grupo en una variable
-    GRUPO_ID=$(echo $linea | cut -d ": " -f 2)
-	# Guardar el apellido del usuario en una variable
-    APELLIDO=$(echo $linea | cut -d ": " -f 2)
-    # Guardar el nombre del usuario en una variable
-    NOMBRE=$(echo $linea | cut -d ": " -f 2)
-    # Guardar el nombre del grupo en una variable
-	GRUPO=`getGroupCn $GRUPO_ID`
-
-    # En caso positivo se guarda el nombre del usuario y el nombre del grupo en el archivo de exportacion
-    echo "$USUARIO,$NOMBRE,$APELLIDO,$GRUPO" >> usersExported.txt
-done
-
-echo "Usuarios exportados correctamente a usersExported.txt"
 
 # Configuración
 DOMAIN="asir.local"
@@ -73,3 +42,36 @@ getAllUsers() {
 getGroupCn() {
 	ldapsearch -x -b "gidNumber=$1,ou=grupos,$DC" "(objectclass=*)" | grep cn | awk '{printf $2}'
 }
+
+clear
+
+# Comprobar si ya existe un archivo de exportación y eliminarlo en caso positivo
+if [ -f usersExported.txt ]; then
+    rm usersExported.txt
+fi
+
+# Bucle de todos los usuarios 
+for linea in $(getAllUsers)
+do
+	# uid: $USUARIO
+	# gidNumber: $GRUPO_ID
+	# sn: $APELLIDO
+	# givenName: $NOMBRE
+	# GRUPO=`getGroupCn $GRUPO_ID`
+
+    # Guardar el UID del usuario en una variable
+    USUARIO=$(echo $linea | cut -d ": " -f 2)
+    # Guardar el GID del grupo en una variable
+    GRUPO_ID=$(echo $linea | cut -d ": " -f 2)
+	# Guardar el apellido del usuario en una variable
+    APELLIDO=$(echo $linea | cut -d ": " -f 2)
+    # Guardar el nombre del usuario en una variable
+    NOMBRE=$(echo $linea | cut -d ": " -f 2)
+    # Guardar el nombre del grupo en una variable
+	GRUPO=`getGroupCn $GRUPO_ID`
+
+    # En caso positivo se guarda el nombre del usuario y el nombre del grupo en el archivo de exportacion
+    echo "$USUARIO,$NOMBRE,$APELLIDO,$GRUPO" >> usersExported.txt
+done
+
+echo "Usuarios exportados correctamente a usersExported.txt"

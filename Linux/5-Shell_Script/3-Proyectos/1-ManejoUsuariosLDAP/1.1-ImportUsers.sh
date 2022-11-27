@@ -4,37 +4,6 @@
 # Descripcion: Realizar un conjunto de scripts con la finalidad de poder importar y exportar usuarios 
 # desde archivos CSV (valores separados por comas) a un directorio OpenLDAP y viceversa.
 
-clear
-
-if [ -f $1 ]
-then
-
-    # Bucle de todas las líneas del archivo a importar
-    for linea in $(cat $1)
-    do
-        # Guardar en variables los diferentes campos del usuario
-		USUARIO=$(grep "$linea" $1 | cut -d',' -f1)
-		NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
-		APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
-		GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
-        
-		# Crear el usuario
-		addUser
-		
-		# Comprobar si el usuario ha sido creado correctamente
-		if [ "`existUser $USUARIO`" = "1" ]
-		then
-			echo "Usuario $USUARIO ha sido creado correctamente"
-		fi
-		
-        # Añadir el usuario al log de usuarios creados con sus contraseñas
-        echo "Usuario: ${NOMBRE} --- Clave: ${CLAVE}" >> ~/usuarios.log
-		
-    done
-else
-    echo "el archivo introducido no existe."
-fi
-
 # Configuración
 DOMAIN="asir.local"
 ADMIN="admin"
@@ -103,12 +72,6 @@ addUser() {
 	fi
 	USUARIO_ID=`getNextUid`
 	
-	# Guardar en variables los diferentes campos del usuario
-	USUARIO=$(grep "$linea" $1 | cut -d',' -f1)
-	NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
-	APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
-	GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
-	
 	# Crear usuario
 	ldapadd $ARGS << EOF
 	dn: uid=$USUARIO,ou=usuarios,$DC
@@ -162,3 +125,34 @@ getNextGid() {
 getGroupId() {
 	ldapsearch -x -b "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
 }
+
+clear
+
+if [ -f $1 ]
+then
+
+    # Bucle de todas las líneas del archivo a importar
+    for linea in $(cat $1)
+    do
+        # Guardar en variables los diferentes campos del usuario
+		USUARIO=$(grep "$linea" $1 | cut -d',' -f1)
+		NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
+		APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
+		GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
+        
+		# Crear el usuario
+		addUser
+		
+		# Comprobar si el usuario ha sido creado correctamente
+		if [ "`existUser $USUARIO`" = "1" ]
+		then
+			echo "Usuario $USUARIO ha sido creado correctamente"
+		fi
+		
+        # Añadir el usuario al log de usuarios creados con sus contraseñas
+        echo "Usuario: ${NOMBRE} --- Clave: ${CLAVE}" >> ~/usuarios.log
+		
+    done
+else
+    echo "el archivo introducido no existe."
+fi
