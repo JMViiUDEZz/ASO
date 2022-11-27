@@ -103,6 +103,12 @@ addUser() {
 	fi
 	USUARIO_ID=`getNextUid`
 	
+	# Guardar en variables los diferentes campos del usuario
+	USUARIO=$(grep "$linea" $1 | cut -d',' -f1)
+	NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
+	APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
+	GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
+	
 	# Crear usuario
 	ldapadd $ARGS << EOF
 	dn: uid=$USUARIO,ou=usuarios,$DC
