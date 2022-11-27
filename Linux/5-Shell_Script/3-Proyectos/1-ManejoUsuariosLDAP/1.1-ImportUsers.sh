@@ -149,9 +149,6 @@ then
 			echo "Usuario $USUARIO ha sido creado correctamente"
 		fi
 		
-        # Añadir el usuario al log de usuarios creados con sus contraseñas
-        echo "Usuario: ${NOMBRE} --- Clave: ${CLAVE}" >> ~/usuarios.log
-		
     done
 else
     echo "el archivo introducido no existe."

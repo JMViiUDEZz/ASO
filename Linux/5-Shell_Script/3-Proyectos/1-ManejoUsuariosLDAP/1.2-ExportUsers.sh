@@ -58,17 +58,38 @@ do
 	# sn: $APELLIDO
 	# givenName: $NOMBRE
 	# GRUPO=`getGroupCn $GRUPO_ID`
-
-    # Guardar el UID del usuario en una variable
-    USUARIO=$(echo $linea | cut -d ": " -f 2)
-    # Guardar el GID del grupo en una variable
-    GRUPO_ID=$(echo $linea | cut -d ": " -f 2)
-	# Guardar el apellido del usuario en una variable
-    APELLIDO=$(echo $linea | cut -d ": " -f 2)
-    # Guardar el nombre del usuario en una variable
-    NOMBRE=$(echo $linea | cut -d ": " -f 2)
-    # Guardar el nombre del grupo en una variable
-	GRUPO=`getGroupCn $GRUPO_ID`
+	
+	if [ $linea | grep "uid:" ]; then
+	    # Guardar el UID del usuario en una variable
+		USUARIO=$(echo $linea | cut -d ":" -f 2)
+		echo "$USUARIO," >> usersExported.txt
+	elif [ $linea | grep "gidNumber:" ]; then
+		# Guardar el GID del grupo en una variable
+		GRUPO_ID=$(echo $linea | cut -d ":" -f 2)
+		# Guardar el nombre del grupo en una variable
+		GRUPO=`getGroupCn $GRUPO_ID`
+		echo "$NOMBRE," >> usersExported.txt
+	elif [ $linea | grep "sn:" ]; then
+		# Guardar el apellido del usuario en una variable
+		APELLIDO=$(echo $linea | cut -d ":" -f 2)
+		echo "$APELLIDO," >> usersExported.txt
+	elif [ $linea | grep "givenName:" ]; then
+		# Guardar el nombre del usuario en una variable
+		NOMBRE=$(echo $linea | cut -d ":" -f 2)
+		echo "$GRUPO" >> usersExported.txt
+	else
+		sleep 1
+	fi
+    # # Guardar el UID del usuario en una variable
+    # USUARIO=$(echo $linea | cut -d ":" -f 2)
+    # # Guardar el GID del grupo en una variable
+    # GRUPO_ID=$(echo $linea | cut -d ":" -f 2)
+	# # Guardar el apellido del usuario en una variable
+    # APELLIDO=$(echo $linea | cut -d ":" -f 2)
+    # # Guardar el nombre del usuario en una variable
+    # NOMBRE=$(echo $linea | cut -d ":" -f 2)
+    # # Guardar el nombre del grupo en una variable
+	# GRUPO=`getGroupCn $GRUPO_ID`
 
     # En caso positivo se guarda el nombre del usuario y el nombre del grupo en el archivo de exportacion
     echo "$USUARIO,$NOMBRE,$APELLIDO,$GRUPO" >> usersExported.txt
