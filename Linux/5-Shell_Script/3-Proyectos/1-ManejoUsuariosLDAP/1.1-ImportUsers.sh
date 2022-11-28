@@ -41,7 +41,7 @@ fi
 
 # Crear un grupo
 addGroup() {
-	clear;echo "Crear un grupo"
+	echo "Crear grupo $1"
 	# Obtener siguiente id
 	GRUPO_ID=`getNextGid`
 	# Crear grupo
@@ -129,22 +129,15 @@ getGroupId() {
 	ldapsearch -x -b "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
 }
 
-clear
-
-if [ -f $1 ]
-then
-    # Bucle de todas las líneas del archivo a importar
-    for linea in $(cat $1)
-    do
-        # Guardar en variables los diferentes campos del usuario
-		USUARIO=$(grep "$linea" $1 | cut -d',' -f1)
-		NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
-		APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
-		GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
+# Bucle de todas las líneas del archivo a importar
+for linea in $(cat $1)
+do
+    # Guardar en variables los diferentes campos del usuario
+	USUARIO=$(grep "$linea" $1 | cut -d',' -f1)
+	NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
+	APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
+	GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
 		
-		# Crear el usuario
-		addUser
-    done
-else
-    echo "El archivo introducido no existe."
-fi
+	# Crear el usuario
+	addUser
+done

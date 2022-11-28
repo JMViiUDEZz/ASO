@@ -39,7 +39,7 @@ if [ -f usersExported.txt ]; then
     rm usersExported.txt
 fi
 
-# Bucle de todos los UID de los usuarios 
+# Bucle de todos los UID de los usuarios
 for linea in $(ldapsearch -x -b "ou=usuarios,$DC" "(objectClass=Person)" uid gidNumber sn givenName | grep uid: | cut -d ":" -f 2)
 do
 	# Guardar el UID del usuario en una variable
@@ -61,4 +61,6 @@ do
 		echo "$USUARIO,$NOMBRE,$APELLIDO,$GRUPO" >> usersExported.txt
 	done
 	echo "Usuarios exportados correctamente a usersExported.txt"
+	break
 done
+

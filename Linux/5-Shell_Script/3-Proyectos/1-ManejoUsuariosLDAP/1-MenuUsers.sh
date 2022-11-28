@@ -49,7 +49,7 @@ getOptions
 read -p "Introduce una opción: " option
 
 # Bucle de permanecer en el menú hasta que el usuario introduzca la opción 3
-while [[ ${option} != 3 ]]
+while [ ${option} != 3 ]
 do
 clear
 	# Comprobar que ha introducido el usuario
@@ -57,22 +57,18 @@ clear
 		1)
 			# Si el usuario introduce la opción 1 le pedimos que introduzca un archivo de importación
 			read -p "Introduce un archivo de importacion de usuarios: " ImportFile
-			# comprobaremos que el archivo de importación introducido existe			
+			# Comprobaremos que el archivo de importación introducido existe			
 			if [ -f $ImportFile ]; then
 				sh 1.1-ImportUsers.sh $ImportFile
+				break
 			else
-				echo "El archivo de importacion no existe"
+				echo "El archivo de importacion no existe, vuelve a introducirlo"
+				sleep 5
 			fi
 		;;
 		2)
 			# Si el usuario introduce la opción 2, crearemos un archivo con los usuarios del sistema y su grupo
 			sh 1.2-ExportUsers.sh
-		;;
-		3)
-			# Si el usuario introduce la opción 3, se saldrá del script
-			echo "Has salido del programa"
-			sleep 2
-			exit
 		;;
 		*)
 			# En caso de q el usuario introduzca una opción no válida, se mostrará lo siguiente
