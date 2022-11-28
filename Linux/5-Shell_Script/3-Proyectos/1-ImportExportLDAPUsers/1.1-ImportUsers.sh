@@ -31,10 +31,6 @@ addGroup() {
 	# Obtener siguiente id
 	GRUPO_ID=`getNextGid`
 	# Crear grupo
-	# Comprobar si ya existe un archivo ldif y eliminarlo en caso positivo
-	if [ -f groupsImported.ldif ]; then
-		rm groupsImported.ldif
-	fi
 	echo "dn: cn=$1,ou=grupos,$DC
 objectClass: posixGroup
 cn: $1
@@ -60,10 +56,6 @@ addUser() {
 			addGroup $GRUPO
 		fi
 		# Crear usuario
-		# Comprobar si ya existe un archivo ldif y eliminarlo en caso positivo
-		if [ -f usersImported.ldif ]; then
-			rm usersImported.ldif
-		fi
 		echo "dn: uid=$USUARIO,ou=usuarios,$DC
 objectClass: posixAccount
 objectClass: inetOrgPerson
