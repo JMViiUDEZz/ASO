@@ -7,6 +7,13 @@
 # Llamar al archivo de configuracion LDAP.conf
 source ./LDAP.conf
 
+DOMAIN="asir.local"
+ADMIN="admin"
+PASS="jose"
+IP=192.168.1.100
+UIDFROM=10000
+GIDFROM=5000
+
 # Obtener "dc=asir,dc=local" a partir del nombre del dominio, en mi caso es asir.local
 getDc() {
 	OIFS=$IFS
@@ -32,9 +39,10 @@ addGroup() {
 	GRUPO_ID=`getNextGid`
 	# Crear grupo
 	echo "dn: cn=$1,ou=grupos,$DC
-	objectClass: posixGroup
-	cn: $1
-	gidNumber: $GRUPO_ID" >> groupsImported.ldif
+objectClass: posixGroup
+cn: $1
+gidNumber: $GRUPO_ID" >> groupsImported.ldif
+	echo " " >> groupsImported.ldif
 	ldapadd -v -D cn=$ADMIN,$DC -w $PASS -f groupsImported.ldif
 }
 
