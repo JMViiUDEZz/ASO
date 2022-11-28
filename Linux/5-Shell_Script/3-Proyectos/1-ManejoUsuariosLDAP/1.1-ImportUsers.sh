@@ -55,25 +55,25 @@ EOF
 
 # Crear un usuario
 addUser() {
-	clear;echo "Crear un usuario"
+	
+	echo "Crear usuario $USUARIO"
 	
 	if [ "`existUser $USUARIO`" = "1" ]
 	then
 		echo "Usuario $USUARIO ya existe"
-	fi
-	
-	GRUPO_ID=`getGroupId $GRUPO`
-	if [ "`existGroup $GRUPO_ID`" = "1" ]
-	then
-		echo "Grupo $GRUPO ya existe"
 	else
-		addGroup $GRUPO
-		echo "Grupo $GRUPO ha sido creado correctamente"
-	fi
-	USUARIO_ID=`getNextUid`
-	
-	# Crear usuario
-	ldapadd $ARGS << EOF
+		USUARIO_ID=`getNextUid`
+		GRUPO_ID=`getGroupId $GRUPO`
+		if [ "`existGroup $GRUPO_ID`" = "1" ]
+		then
+			echo "Grupo $GRUPO ya existe"
+		else
+			addGroup $GRUPO
+			echo "Grupo $GRUPO ha sido creado correctamente"
+		fi
+		
+		# Crear usuario
+		ldapadd $ARGS << EOF
 	dn: uid=$USUARIO,ou=usuarios,$DC
 	objectClass: posixAccount
 	objectClass: inetOrgPerson
@@ -89,6 +89,9 @@ addUser() {
 	givenName: $NOMBRE
 	mail: $USUARIO@$DOMAIN
 EOF
+
+		echo "Usuario $USUARIO ha sido creado correctamente"
+	fi
 }
 
 # Verifica si un usuario existe
@@ -130,7 +133,6 @@ clear
 
 if [ -f $1 ]
 then
-
     # Bucle de todas las líneas del archivo a importar
     for linea in $(cat $1)
     do
@@ -139,17 +141,10 @@ then
 		NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
 		APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
 		GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
-        
+		
 		# Crear el usuario
 		addUser
-		
-		# Comprobar si el usuario ha sido creado correctamente
-		if [ "`existUser $USUARIO`" = "1" ]
-		then
-			echo "Usuario $USUARIO ha sido creado correctamente"
-		fi
-		
     done
 else
-    echo "el archivo introducido no existe."
+    echo "El archivo introducido no existe."
 fi
