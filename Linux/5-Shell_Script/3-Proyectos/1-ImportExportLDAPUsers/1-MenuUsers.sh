@@ -25,13 +25,6 @@
 # con un fichero de configuración en el que se pueda establecertodos los parámetros necesarios 
 # para el funcionamiento, como el nombre del servidor, dirección IP, nombre del dominio, etc…
 
-# Comprobacion de que se ejecuta el script como root
-# if ! [ $(id -u) = 0 ]
-# then 
-    # echo -e "No tienes permisos.\nEjecuta el script como root." 
-    # exit 1 
-# fi
-
 # Limpiar la pantalla al lanzar el menú
 clear
 
@@ -63,7 +56,7 @@ clear
 				break
 			else
 				echo "El archivo de importacion no existe, vuelve a introducirlo"
-				sleep 5
+				sleep 3
 			fi
 		;;
 		2)

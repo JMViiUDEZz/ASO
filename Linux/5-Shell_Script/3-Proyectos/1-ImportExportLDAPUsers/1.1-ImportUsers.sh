@@ -4,15 +4,8 @@
 # Descripcion: Realizar un conjunto de scripts con la finalidad de poder importar y exportar usuarios 
 # desde archivos CSV (valores separados por comas) a un directorio OpenLDAP y viceversa.
 
-# Configuración
-DOMAIN="asir.local"
-ADMIN="admin"
-PASS="jose"
-# IP=192.168.1.100
-UIDFROM=10000
-GIDFROM=5000
-# En este caso, las variables se han declarado en el propio script
-# No obstante, podrían ser solicitadas  al inicio de la ejecución del mismo
+# Llamar al archivo de configuracion LDAP.conf
+source ./LDAP.conf
 
 # Obtener "dc=asir,dc=local" a partir del nombre del dominio, en mi caso es asir.local
 getDc() {
@@ -32,11 +25,12 @@ getDc() {
 # Fijar "dc=asir,dc=local"
 DC=`getDc $DOMAIN`
 
-# Fijar argumentos que se pasarán a partir de el nombre de la cuenta del administrador y la contraseña
+# Fijar argumentos
+ARGS1="-x -H ldap://$IP -b"
 if [ "$PASS" = "" ]; then
-	ARGS="-v -D cn=$ADMIN,$DC -W"
+	ARGS2="-v -D cn=$ADMIN,$DC -W"
 else
-	ARGS="-v -D cn=$ADMIN,$DC -w $PASS"
+	ARGS2="-v -D cn=$ADMIN,$DC -w $PASS"
 fi
 
 # Crear un grupo
@@ -45,19 +39,16 @@ addGroup() {
 	# Obtener siguiente id
 	GRUPO_ID=`getNextGid`
 	# Crear grupo
-	ldapadd $ARGS << EOF
-	dn: cn=$1,ou=grupos,$DC
+	echo "dn: cn=$1,ou=grupos,$DC
 	objectClass: posixGroup
 	cn: $1
-	gidNumber: $GRUPO_ID
-EOF
+	gidNumber: $GRUPO_ID" >> groupsImported.ldif
+	ldapadd $ARGS2 -f groupsImported.ldif
 }
 
 # Crear un usuario
 addUser() {
-	
 	echo "Crear usuario $USUARIO"
-	
 	if [ "`existUser $USUARIO`" = "1" ]
 	then
 		echo "Usuario $USUARIO ya existe"
@@ -71,10 +62,8 @@ addUser() {
 			addGroup $GRUPO
 			echo "Grupo $GRUPO ha sido creado correctamente"
 		fi
-		
 		# Crear usuario
-		ldapadd $ARGS << EOF
-	dn: uid=$USUARIO,ou=usuarios,$DC
+		echo "dn: uid=$USUARIO,ou=usuarios,$DC
 	objectClass: posixAccount
 	objectClass: inetOrgPerson
 	objectClass: organizationalPerson
@@ -87,26 +76,25 @@ addUser() {
 	gidNumber: $GRUPO_ID
 	sn: $APELLIDO
 	givenName: $NOMBRE
-	mail: $USUARIO@$DOMAIN
-EOF
-
+	mail: $USUARIO@$DOMAIN" >> usersImported.ldif
+		ldapadd $ARGS2 -f usersImported.ldif
 		echo "Usuario $USUARIO ha sido creado correctamente"
 	fi
 }
 
 # Verifica si un usuario existe
 existUser() {
-	ldapsearch -x -b "ou=usuarios,$DC" "(objectclass=*)" | grep ^uid: | awk -v usuario=$1 '{if($2==usuario) print "1"}'
+	ldapsearch $ARGS1 "ou=usuarios,$DC" "(objectclass=*)" | grep ^uid: | awk -v usuario=$1 '{if($2==usuario) print "1"}'
 }
 
 # Verifica si un grupo existe
 existGroup() {
-	ldapsearch -x -b "ou=grupos,$DC" "(objectclass=*)" | grep ^gidNumber: | awk -v grupo=$1 '{if($2==grupo) print "1"}'
+	ldapsearch $ARGS1 "ou=grupos,$DC" "(objectclass=*)" | grep ^gidNumber: | awk -v grupo=$1 '{if($2==grupo) print "1"}'
 }
 
 # Obtener próximo UID libre
 getNextUid() {
-	LASTUID=`ldapsearch -x -b "ou=usuarios,$DC" "(objectclass=*)" | grep uidNumber | awk '{print $2}' | sort -r | head -1`
+	LASTUID=`ldapsearch $ARGS1 "ou=usuarios,$DC" "(objectclass=*)" | grep uidNumber | awk '{print $2}' | sort -r | head -1`
 	if [ "$LASTUID" = "" ]; then
 		echo $UIDFROM
 	else
@@ -116,7 +104,7 @@ getNextUid() {
 
 # Obtener próximo GID libre
 getNextGid() {
-	LASTGID=`ldapsearch -x -b "ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{print $2}' | sort -r | head -1`
+	LASTGID=`ldapsearch $ARGS1 "ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{print $2}' | sort -r | head -1`
 	if [ "$LASTGID" = "" ]; then
 		echo $GIDFROM
 	else
@@ -126,7 +114,7 @@ getNextGid() {
 
 # Obtener GID a partir del nombre del grupo
 getGroupId() {
-	ldapsearch -x -b "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
+	ldapsearch $ARGS1 "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
 }
 
 # Bucle de todas las líneas del archivo a importar
@@ -137,7 +125,6 @@ do
 	NOMBRE=$(grep "$linea" $1 | cut -d',' -f2)
 	APELLIDO=$(grep "$linea" $1 | cut -d',' -f3)
 	GRUPO=$(grep "$linea" $1 | cut -d',' -f4)
-		
 	# Crear el usuario
 	addUser
 done
