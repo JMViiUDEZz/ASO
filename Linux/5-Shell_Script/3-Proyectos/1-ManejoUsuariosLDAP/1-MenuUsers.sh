@@ -69,6 +69,7 @@ clear
 		2)
 			# Si el usuario introduce la opción 2, crearemos un archivo con los usuarios del sistema y su grupo
 			sh 1.2-ExportUsers.sh
+			break
 		;;
 		*)
 			# En caso de q el usuario introduzca una opción no válida, se mostrará lo siguiente
