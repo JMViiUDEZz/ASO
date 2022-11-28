@@ -5,7 +5,7 @@
 # desde archivos CSV (valores separados por comas) a un directorio OpenLDAP y viceversa.
 
 # Llamar al archivo de configuracion LDAP.conf
-source ./LDAP.conf
+. ./LDAP.conf
 
 # Obtener "dc=asir,dc=local" a partir del nombre del dominio, en mi caso es asir.local
 getDc() {

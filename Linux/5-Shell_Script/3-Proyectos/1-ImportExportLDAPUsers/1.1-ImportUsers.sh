@@ -5,7 +5,7 @@
 # desde archivos CSV (valores separados por comas) a un directorio OpenLDAP y viceversa.
 
 # Llamar al archivo de configuracion LDAP.conf
-source ./LDAP.conf
+. ./LDAP.conf
 
 # Obtener "dc=asir,dc=local" a partir del nombre del dominio, en mi caso es asir.local
 getDc() {
@@ -31,12 +31,6 @@ addGroup() {
 	# Obtener siguiente id
 	GRUPO_ID=`getNextGid`
 	# Crear grupo
-	ldapadd -v -D cn=$ADMIN,$DC -w $PASS << EOF
-	dn: cn=$1,ou=grupos,$DC
-	objectClass: posixGroup
-	cn: $1
-	gidNumber: $GRUPO_ID
-EOF
 	# Comprobar si ya existe un archivo ldif y eliminarlo en caso positivo
 	if [ -f groupsImported.ldif ]; then
 		rm groupsImported.ldif
@@ -46,6 +40,7 @@ objectClass: posixGroup
 cn: $1
 gidNumber: $GRUPO_ID" >> groupsImported.ldif
 	echo " " >> groupsImported.ldif
+	ldapadd -v -D cn=$ADMIN,$DC -w $PASS -f groupsImported.ldif
 	echo "Grupo $1 ha sido creado correctamente"
 }
 
@@ -65,22 +60,6 @@ addUser() {
 			addGroup $GRUPO
 		fi
 		# Crear usuario
-		ldapadd -v -D cn=$ADMIN,$DC -w $PASS << EOF
-		dn: uid=$USUARIO,ou=usuarios,$DC
-		objectClass: posixAccount
-		objectClass: inetOrgPerson
-		objectClass: organizationalPerson
-		objectClass: person
-		loginShell: /bin/bash
-		homeDirectory: /home/$USUARIO
-		uid: $USUARIO
-		cn: $NOMBRE $APELLIDO
-		uidNumber: $USUARIO_ID
-		gidNumber: $GRUPO_ID
-		sn: $APELLIDO
-		givenName: $NOMBRE
-		mail: $USUARIO@$DOMAIN"
-EOF
 		# Comprobar si ya existe un archivo ldif y eliminarlo en caso positivo
 		if [ -f usersImported.ldif ]; then
 			rm usersImported.ldif
@@ -100,6 +79,7 @@ sn: $APELLIDO
 givenName: $NOMBRE
 mail: $USUARIO@$DOMAIN" >> usersImported.ldif
 		echo " " >> usersImported.ldif
+		ldapadd -v -D cn=$ADMIN,$DC -w $PASS -f usersImported.ldif
 		echo "Usuario $USUARIO ha sido creado correctamente"
 	fi
 }
