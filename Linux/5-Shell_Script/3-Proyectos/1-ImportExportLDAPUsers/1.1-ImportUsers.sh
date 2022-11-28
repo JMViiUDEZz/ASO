@@ -36,7 +36,6 @@ addGroup() {
 objectClass: posixGroup
 cn: $1
 gidNumber: $GRUPO_ID" >> groupsImported.ldif
-	echo " " >> groupsImported.ldif
 	ldapadd -v -D cn=$ADMIN,$DC -w $PASS << EOF
 	dn: cn=$1,ou=grupos,$DC
 	objectClass: posixGroup
@@ -77,7 +76,6 @@ gidNumber: $GRUPO_ID
 sn: $APELLIDO
 givenName: $NOMBRE
 mail: $USUARIO@$DOMAIN" >> usersImported.ldif
-		echo " " >> usersImported.ldif
 		ldapadd -v -D cn=$ADMIN,$DC -w $PASS  << EOF
 		dn: uid=$USUARIO,ou=usuarios,$DC
 		objectClass: posixAccount
