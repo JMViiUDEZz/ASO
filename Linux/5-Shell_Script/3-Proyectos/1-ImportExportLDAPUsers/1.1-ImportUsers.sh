@@ -25,14 +25,6 @@ getDc() {
 # Fijar "dc=asir,dc=local"
 DC=`getDc $DOMAIN`
 
-# Fijar argumentos
-ARGS1="-x -H ldap://$IP -b"
-if [ "$PASS" = "" ]; then
-	ARGS2="-v -D cn=$ADMIN,$DC -W"
-else
-	ARGS2="-v -D cn=$ADMIN,$DC -w $PASS"
-fi
-
 # Crear un grupo
 addGroup() {
 	echo "Crear grupo $1"
@@ -43,7 +35,7 @@ addGroup() {
 	objectClass: posixGroup
 	cn: $1
 	gidNumber: $GRUPO_ID" >> groupsImported.ldif
-	ldapadd $ARGS2 -f groupsImported.ldif
+	ldapadd -v -D cn=$ADMIN,$DC -w $PASS -f groupsImported.ldif
 }
 
 # Crear un usuario
@@ -64,37 +56,37 @@ addUser() {
 		fi
 		# Crear usuario
 		echo "dn: uid=$USUARIO,ou=usuarios,$DC
-	objectClass: posixAccount
-	objectClass: inetOrgPerson
-	objectClass: organizationalPerson
-	objectClass: person
-	loginShell: /bin/bash
-	homeDirectory: /home/$USUARIO
-	uid: $USUARIO
-	cn: $NOMBRE $APELLIDO
-	uidNumber: $USUARIO_ID
-	gidNumber: $GRUPO_ID
-	sn: $APELLIDO
-	givenName: $NOMBRE
-	mail: $USUARIO@$DOMAIN" >> usersImported.ldif
-		ldapadd $ARGS2 -f usersImported.ldif
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+loginShell: /bin/bash
+homeDirectory: /home/$USUARIO
+uid: $USUARIO
+cn: $NOMBRE $APELLIDO
+uidNumber: $USUARIO_ID
+gidNumber: $GRUPO_ID
+sn: $APELLIDO
+givenName: $NOMBRE
+mail: $USUARIO@$DOMAIN" >> usersImported.ldif
+		ldapadd -v -D cn=$ADMIN,$DC -w $PASS -f usersImported.ldif
 		echo "Usuario $USUARIO ha sido creado correctamente"
 	fi
 }
 
 # Verifica si un usuario existe
 existUser() {
-	ldapsearch $ARGS1 "ou=usuarios,$DC" "(objectclass=*)" | grep ^uid: | awk -v usuario=$1 '{if($2==usuario) print "1"}'
+	ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(objectclass=*)" | grep ^uid: | awk -v usuario=$1 '{if($2==usuario) print "1"}'
 }
 
 # Verifica si un grupo existe
 existGroup() {
-	ldapsearch $ARGS1 "ou=grupos,$DC" "(objectclass=*)" | grep ^gidNumber: | awk -v grupo=$1 '{if($2==grupo) print "1"}'
+	ldapsearch -x -H ldap://$IP -b "ou=grupos,$DC" "(objectclass=*)" | grep ^gidNumber: | awk -v grupo=$1 '{if($2==grupo) print "1"}'
 }
 
 # Obtener próximo UID libre
 getNextUid() {
-	LASTUID=`ldapsearch $ARGS1 "ou=usuarios,$DC" "(objectclass=*)" | grep uidNumber | awk '{print $2}' | sort -r | head -1`
+	LASTUID=`ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(objectclass=*)" | grep uidNumber | awk '{print $2}' | sort -r | head -1`
 	if [ "$LASTUID" = "" ]; then
 		echo $UIDFROM
 	else
@@ -104,7 +96,7 @@ getNextUid() {
 
 # Obtener próximo GID libre
 getNextGid() {
-	LASTGID=`ldapsearch $ARGS1 "ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{print $2}' | sort -r | head -1`
+	LASTGID=`ldapsearch -x -H ldap://$IP -b "ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{print $2}' | sort -r | head -1`
 	if [ "$LASTGID" = "" ]; then
 		echo $GIDFROM
 	else
@@ -114,7 +106,7 @@ getNextGid() {
 
 # Obtener GID a partir del nombre del grupo
 getGroupId() {
-	ldapsearch $ARGS1 "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
+	ldapsearch -x -H ldap://$IP -b "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
 }
 
 # Bucle de todas las líneas del archivo a importar
