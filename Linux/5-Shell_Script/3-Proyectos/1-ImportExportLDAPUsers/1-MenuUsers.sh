@@ -67,6 +67,7 @@ clear
 		*)
 			# En caso de q el usuario introduzca una opción no válida, se mostrará lo siguiente
 			echo "Opción no válida"
+			break
 		;;
 	esac
 done
