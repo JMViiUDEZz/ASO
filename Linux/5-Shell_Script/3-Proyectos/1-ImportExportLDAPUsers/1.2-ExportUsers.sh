@@ -31,7 +31,7 @@ if [ -f usersExported.csv ]; then
 fi
 
 # Bucle de todos los UID de los usuarios
-for linea in $(ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(objectClass=Person)" uid gidNumber sn givenName | grep uid: | cut -d ":" -f 2)
+for linea in $(ldapsearch -x -b "ou=usuarios,$DC" "(objectClass=Person)" uid gidNumber sn givenName | grep uid: | cut -d ":" -f 2)
 do
 	# Guardar el UID del usuario en una variable
 	USUARIO_ID=$(echo $linea)
@@ -39,13 +39,13 @@ do
 	for USUARIO in $USUARIO_ID
 	do
 		# Guardar el nombre del usuario en una variable
-		NOMBRE=$(ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(uid=$USUARIO)" givenName | grep givenName: | cut -d ":" -f 2 | tr -d " ")
+		NOMBRE=$(ldapsearch -x -b "ou=usuarios,$DC" "(uid=$USUARIO)" givenName | grep givenName: | cut -d ":" -f 2 | tr -d " ")
 		# Guardar el apellido del usuario en una variable
-		APELLIDO=$(ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(uid=$USUARIO)" sn | grep sn: | cut -d ":" -f 2 | tr -d " ")
+		APELLIDO=$(ldapsearch -x -b "ou=usuarios,$DC" "(uid=$USUARIO)" sn | grep sn: | cut -d ":" -f 2 | tr -d " ")
 		# Guardar el GID del grupo en una variable
-		GRUPO_ID=$(ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(uid=$USUARIO)" gidNumber | grep gidNumber: | cut -d ":" -f 2 | tr -d " ")
+		GRUPO_ID=$(ldapsearch -x -b "ou=usuarios,$DC" "(uid=$USUARIO)" gidNumber | grep gidNumber: | cut -d ":" -f 2 | tr -d " ")
 		# Guardar el nombre del grupo en una variable
-		GRUPO=$(ldapsearch -x -H ldap://$IP -b "ou=grupos,$DC" "(gidNumber=$GRUPO_ID)" cn | grep cn: | cut -d ":" -f 2 | tr -d " ")
+		GRUPO=$(ldapsearch -x -b "ou=grupos,$DC" "(gidNumber=$GRUPO_ID)" cn | grep cn: | cut -d ":" -f 2 | tr -d " ")
 		# En caso positivo se guarda el nombre del usuario y el nombre del grupo en el archivo de exportacion
 		echo "$USUARIO,$NOMBRE,$APELLIDO,$GRUPO" >> usersExported.csv
 	done

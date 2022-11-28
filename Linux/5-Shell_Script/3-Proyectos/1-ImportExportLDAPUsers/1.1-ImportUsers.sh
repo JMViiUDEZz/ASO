@@ -69,6 +69,7 @@ gidNumber: $GRUPO_ID
 sn: $APELLIDO
 givenName: $NOMBRE
 mail: $USUARIO@$DOMAIN" >> usersImported.ldif
+		echo " " >> usersImported.ldif
 		ldapadd -v -D cn=$ADMIN,$DC -w $PASS -f usersImported.ldif
 		echo "Usuario $USUARIO ha sido creado correctamente"
 	fi
@@ -76,17 +77,17 @@ mail: $USUARIO@$DOMAIN" >> usersImported.ldif
 
 # Verifica si un usuario existe
 existUser() {
-	ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(objectclass=*)" | grep ^uid: | awk -v usuario=$1 '{if($2==usuario) print "1"}'
+	ldapsearch -x -b "ou=usuarios,$DC" "(objectclass=*)" | grep ^uid: | awk -v usuario=$1 '{if($2==usuario) print "1"}'
 }
 
 # Verifica si un grupo existe
 existGroup() {
-	ldapsearch -x -H ldap://$IP -b "ou=grupos,$DC" "(objectclass=*)" | grep ^gidNumber: | awk -v grupo=$1 '{if($2==grupo) print "1"}'
+	ldapsearch -x -b "ou=grupos,$DC" "(objectclass=*)" | grep ^gidNumber: | awk -v grupo=$1 '{if($2==grupo) print "1"}'
 }
 
 # Obtener próximo UID libre
 getNextUid() {
-	LASTUID=`ldapsearch -x -H ldap://$IP -b "ou=usuarios,$DC" "(objectclass=*)" | grep uidNumber | awk '{print $2}' | sort -r | head -1`
+	LASTUID=`ldapsearch -x -b "ou=usuarios,$DC" "(objectclass=*)" | grep uidNumber | awk '{print $2}' | sort -r | head -1`
 	if [ "$LASTUID" = "" ]; then
 		echo $UIDFROM
 	else
@@ -96,7 +97,7 @@ getNextUid() {
 
 # Obtener próximo GID libre
 getNextGid() {
-	LASTGID=`ldapsearch -x -H ldap://$IP -b "ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{print $2}' | sort -r | head -1`
+	LASTGID=`ldapsearch -x -b "ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{print $2}' | sort -r | head -1`
 	if [ "$LASTGID" = "" ]; then
 		echo $GIDFROM
 	else
@@ -106,7 +107,7 @@ getNextGid() {
 
 # Obtener GID a partir del nombre del grupo
 getGroupId() {
-	ldapsearch -x -H ldap://$IP -b "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
+	ldapsearch -x -b "cn=$1,ou=grupos,$DC" "(objectclass=*)" | grep gidNumber | awk '{printf $2}'
 }
 
 # Bucle de todas las líneas del archivo a importar
