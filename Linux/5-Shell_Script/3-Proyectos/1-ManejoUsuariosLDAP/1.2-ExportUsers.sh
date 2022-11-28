@@ -60,7 +60,5 @@ do
 		# En caso positivo se guarda el nombre del usuario y el nombre del grupo en el archivo de exportacion
 		echo "$USUARIO,$NOMBRE,$APELLIDO,$GRUPO" >> usersExported.txt
 	done
-	echo "Usuarios exportados correctamente a usersExported.txt"
-	break
 done
-
+echo "Usuarios exportados correctamente a usersExported.txt"
