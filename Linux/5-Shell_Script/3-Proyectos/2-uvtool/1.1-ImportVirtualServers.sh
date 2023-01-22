@@ -15,6 +15,8 @@ addVirtualServer() {
 		ssh-keygen
 		# Crear servidor virtual
 		uvt-kvm create $VIRTUAL_SERVER release=$OS --cpu $NUMBER_CPU --memory $SIZE_MEMORY --disk $SIZE_DISK --ssh-public-key-file /home/$USER/.ssh/id_rsa --password $PASSWD
+		# Esperar hasta que se complete la creación
+		uvt-kvm wait $VIRTUAL_SERVER
 		echo "Servidor virtual $VIRTUAL_SERVER ha sido creado correctamente"
 	fi
 }
