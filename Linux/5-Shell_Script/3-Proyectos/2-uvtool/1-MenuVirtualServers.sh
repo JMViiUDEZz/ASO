@@ -9,7 +9,7 @@ clear
 
 # Verifica si un servidor virtual existe
 existVirtualServer() {
-	uvt-kvm list | awk -v virtualserver=$1 '{if($2==virtualserver) print "1"}'
+	uvt-kvm list | awk -v virtualserver=$1 '{if($1==virtualserver) print "1"}'
 }
 
 # Función que muestra las opciones del menú
