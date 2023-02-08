@@ -29,16 +29,30 @@ clear
 		1)
             # Si el usuario introduce la opción 1 ejecutamos el script de obtener los recursos del sistema
             sh 1.1-ResourcesMonitoring.sh
-			break
 		;;
 		2)
             # Si el usuario introduce la opción 2 le ofrecemos el menu de copias de seguridad
             sh 1.2-MenuUserBackups.sh
-			break
 		;;
 		*)
 			# En caso de q el usuario introduzca una opción no válida, se mostrará lo siguiente
 			echo "Opción no válida"
 		;;
-	esac
+    esac
+    # Al final de cada opción, pediremos al usuario que teclee una tecla al azar para continuar
+    echo ""
+    read -p "Pulsa una tecla al azar para continuar..." pausa
+
+	# Limpiar la pantalla
+    clear
+
+    # Volvemos a mostrar las opciones del menú
+    getOptions
+    read -p "Introduce una nueva opción: " option    
 done
+
+# Limpiar la pantalla
+clear
+
+echo "Has cerrado el programa"
+echo ""
