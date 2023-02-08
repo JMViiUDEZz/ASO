@@ -46,17 +46,17 @@ do
     # Pedimos al usuario que nos confirme si quiere sustiuir el /home del backup por el home actual
     if [ -d /home/$user ]; then
         flag=0
-        until [ ${flag} == 1 ]
+        until [ ${flag} = 1 ]
         do
             # Mostramos las opciones al usuario
-            read -p "Actualmente ya existe un home del usuario $user, ¿quiere borrar el home actual 
-            y sustituirlo por el home de la copia de seguridad? y/n: " option
+            read -p "Actualmente ya existe un home del usuario $user, ¿quiere borrar el home actual y sustituirlo por el home de la copia de seguridad? y/n: " option
             # Comprobamos que ha introducido el usuario
             case ${option} in
                 "y")
                     # Eliminamos el home actual...
                     echo "Eliminando el home actual..."
-                    rm -rf /home/$user
+					rm -rf /home/$user
+                    # rm -rf /home/${user:?}
                     # Recuperamos el home del backup...
                     echo "Recuperando el home de la copia de seguridad..."
                     tar -xzf $DIRBAC/$user.tar -C /
