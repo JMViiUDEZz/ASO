@@ -46,7 +46,7 @@ do
     # Pedimos al usuario que nos confirme si quiere sustiuir el /home del backup por el home actual
     if [ -d /home/$user ]; then
         flag=0
-        until [[ ${flag} == 1 ]]
+        until [ ${flag} == 1 ]
         do
             # Mostramos las opciones al usuario
             read -p "Actualmente ya existe un home del usuario $user, ¿quiere borrar el home actual 
