@@ -113,12 +113,12 @@ while($OPCION -ne 7)
 	# Comprobar que ha introducido el usuario
     switch($OPCION)
     {
-        1{Invoke-Command -ComputerName w-server -ScriptBlock {getAll}}
-        2{Invoke-Command -ComputerName w-server -FilePath C:\1-ActiveDirectoryUserManagement\1.1-MenuOrganizationalUnits.ps1}
-        3{Invoke-Command -ComputerName w-server -FilePath C:\1-ActiveDirectoryUserManagement\1.2-MenuGroups.ps1}
-        4{Invoke-Command -ComputerName w-server -FilePath C:\1-ActiveDirectoryUserManagement\1.3-MenuUsers.ps1}
-        5{Invoke-Command -ComputerName w-server -ScriptBlock {imUsers}}
-        6{Invoke-Command -ComputerName w-server -ScriptBlock {exUsers}}
+        1{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -ScriptBlock {getAll}}
+        2{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\1-ActiveDirectoryUserManagement\1.1-MenuOrganizationalUnits.ps1}
+        3{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\1-ActiveDirectoryUserManagement\1.2-MenuGroups.ps1}
+        4{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\1-ActiveDirectoryUserManagement\1.3-MenuUsers.ps1}
+        5{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -ScriptBlock {imUsers}}
+        6{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -ScriptBlock {exUsers}}
 		7{exit}
     }
 	# Volvemos a ejecutar la funcion para que muestre las OPCIONes del menu

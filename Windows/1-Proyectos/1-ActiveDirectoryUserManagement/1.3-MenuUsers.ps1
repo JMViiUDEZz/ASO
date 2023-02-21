@@ -43,6 +43,7 @@ function modPasswd {
 				Write-Host "[ERROR] - La clave no cumple lo minimo requerido"
 				PASSWORD_OK=1
 			}
+		}
 	}
 	elseif ( "$RESPUESTA" -Match "n" ) {
 		Write-Host "Ha seleccionado la opcion [n]"
@@ -104,6 +105,7 @@ function enDisUser {
 		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
 		Write-Host "Desactivando la cuenta del usuario $1"
 		Disable-ADAccount $1
+	}
 }
 
 # Desbloquear la cuenta del usuario (Bloqueado por introducir una contraseña erronea reiteradamente)
@@ -123,6 +125,7 @@ function unUser {
 	}
 	else {
 		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
+	}
 }
 
 # Obtener un usuario, si existe
@@ -141,7 +144,7 @@ function getUser {
 				Write-Host "El usuario $USUARIO llamado $NOMBRE $APELLIDO no existe"
 			}
 			else {
-				Write-Host "Busqueda de datos del usuario $USUARIO llamado $NOMBRE $APELLIDO: "
+				Write-Host "Busqueda de datos del usuario $USUARIO llamado $NOMBRE ${APELLIDO}: "
 				# Obtenga todos los usuarios con un texto especifico en el nombre.
 				Get-Aduser -Filter { Name -like "existUserName $NOMBRE $APELLIDO"}
 				Start-Sleep -Seconds 3
@@ -155,11 +158,13 @@ function getUser {
 			Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
 			Write-Host "El usuario $USUARIO no existe"
 		}
+	}
 	else {
 		Write-Host "Busqueda de datos del usuario $USUARIO: "
 		Get-ADUser $USUARIO
 		Start-Sleep -Seconds 3
 	}
+
 }
 
 # Obtener todos los usuarios
