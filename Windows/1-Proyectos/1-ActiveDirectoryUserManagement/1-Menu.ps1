@@ -3,7 +3,20 @@
 # Descripcion: Realizar un conjunto de scripts en PowerShell con la finalidad de poder facilitar la gestion de usuarios de Active Directory
 
 # Llamar al archivo de configuracion ActiveDirectory.ps1
-. .\ActiveDirectory.ps1
+#. .\ActiveDirectory.ps1
+
+# Configuración
+$DOMAIN=(Get-ADDomainController).Domain
+$DC=(Get-ADDomainController).DefaultPartition
+$ADMIN="Administrador"
+$PASSWORD="jose2019+"
+$DATE=Get-Date -Format "MM/dd/yyyy"
+$TIME=Get-Date -Format "HH:mm"
+$DATE_TIME=Get-Date -Format "MM/dd/yyyy_HH:mm"
+$DEFDIR="C:\1-ActiveDirectoryUserManagement"
+$DEFIMPFILE="$DIRPS1\usersImported.ldf"
+$DEFEXPFILE="$DIRPS1\usersExported.ldf"
+# En este caso, las variables se han declarado en el propio script
 
 # Limpiar la pantalla al lanzar el menu
 Clear-Host
