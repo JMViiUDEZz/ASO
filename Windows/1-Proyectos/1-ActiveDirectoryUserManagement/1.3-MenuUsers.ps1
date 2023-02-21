@@ -173,7 +173,7 @@ function getUser {
 		}
 	}
 	else {
-		Write-Host "Busqueda de datos del usuario $USUARIO: "
+		Write-Host "Busqueda de datos del usuario ${USUARIO}: "
 		Get-ADUser $USUARIO
 		Start-Sleep -Seconds 3
 	}
@@ -282,7 +282,7 @@ function getAll {
 	if ( "$RESPUESTA" -Match "scd" ) {
 		Write-Host "Ha seleccionado la opcion [scd]"
 		# Obtener el controlador de dominio al que pertenece su computadora
-		Get-ADDomainController –Discover
+		Get-ADDomainController -Discover
 	}
 	elseif ( "$RESPUESTA" -Match "lcd" ) {
 		Write-Host "Ha seleccionado la opcion [lcd]"
