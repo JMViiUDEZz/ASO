@@ -5,7 +5,7 @@
 # Llamar al archivo de configuracion ActiveDirectory.ps1
 #. .\ActiveDirectory.ps1
 
-# Configuración
+# Configuracion
 $DOMAIN=(Get-ADDomainController).Domain
 $DC=(Get-ADDomainController).DefaultPartition
 $ADMIN="Administrador"
