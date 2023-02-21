@@ -23,7 +23,7 @@ function getGroup() {
 		Write-Host "El grupo $GRUPO no existe"
 	}
 	else {
-		Write-Host "Busqueda de datos del grupo $GRUPO: "
+		Write-Host "Busqueda de datos del grupo ${GRUPO}"
 		Get-ADGroup $GRUPO
 		Start-Sleep -Seconds 3
 	}
@@ -33,7 +33,7 @@ function getGroup() {
 function getAllGroups() {
 	Clear-Host;Write-Host "Obtener todos los grupos"
 	Write-Host "¿Desea obtenerlos con todas sus propiedades?"
-	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n"): " 
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
 		# Obtenga todas las propiedades de todos los grupos.
@@ -60,10 +60,10 @@ function addGroup() {
 	# Solicitar grupo sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
 	while ( "existGroup $GRUPO" -Match "1" ) {
-		$GRUPO = Read-Host "Grupo $GRUPO ya existe, ingrese nuevo: "
+		$GRUPO = Read-Host "Grupo $GRUPO ya existe, ingrese nuevo"
 	}
 	Write-Host "¿Cual de los siguientes valores desea establecer para el parametro GroupScope al grupo $GRUPO?"
-	$RESPUESTA = Read-Host "[dl] DomainLocal [g] Global [u] Universal: (por defecto es "g"): " 
+	$RESPUESTA = Read-Host "[dl] DomainLocal [g] Global [u] Universal: (por defecto es "g")" 
 	if ( "$RESPUESTA" -Match "dl" ) {
 		Write-Host "Ha seleccionado la opcion [dl]"
 		# Crear grupo
@@ -92,7 +92,7 @@ function delGroup() {
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
 	while ( "existUser $GRUPO" -NotMatch "$GRUPO" ) {
-		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo: "
+		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	Remove-ADGroup $GRUPO 
 }
@@ -104,17 +104,17 @@ function modGroup {
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
 	while ( "existUser $GRUPO" -NotMatch "$GRUPO" ) {
-		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo: "
+		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	# Solicitar otros campos del usuario
 	Write-Host "A continuacion, podra añadir Eliminar un usuario a un grupo:"
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
 	while ( "existUser $USUARIO" -NotMatch "$USUARIO" ) {
-		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo: "
+		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}		
 	Write-Host "¿Cual de los siguientes opciones desea usar para modificar el grupo $GRUPO, respecto al usuario $USUARIO introducido previamente?"
-	$RESPUESTA = Read-Host "[a] Añadir [r] Eliminar [g] Enumerar: (por defecto es "r"): " 
+	$RESPUESTA = Read-Host "[a] Añadir [r] Eliminar [g] Enumerar: (por defecto es "r")" 
 	if ( "$RESPUESTA" -Match "a" ) {
 		Write-Host "Ha seleccionado la opcion [a]"
 		# Añadir un usuario a un grupo:
@@ -155,7 +155,7 @@ function getOptions{
 getOptions
  
 # Leer la opcion introducida por el usuario
-$OPCION = Read-Host "Introduzca una opcion: "
+$OPCION = Read-Host "Introduzca una opcion"
 
 # Bucle para permanecer en el menu hasta que el usuario introduzca la opcion 6
 while($OPCION -ne 6)
@@ -173,5 +173,5 @@ while($OPCION -ne 6)
 	# Volvemos a ejecutar la funcion para que muestre las opciones del menu
     getOptions
 	# Leer la nueva opcion introducida por el usuario
-    $OPCION = Read-Host "Introduzca una nueva opcion: "
+    $OPCION = Read-Host "Introduzca una nueva opcion"
 }

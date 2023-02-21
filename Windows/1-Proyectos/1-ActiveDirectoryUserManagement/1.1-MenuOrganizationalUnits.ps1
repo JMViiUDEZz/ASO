@@ -13,12 +13,12 @@ function existOu {
 # Obtener una unidad organizativa, si existe
 function getOu {
 	Clear-Host;Write-Host "Obtener una unidad organizativa, si existe"
-	$UO = Read-Host "Unidad organizativa: "
+	$UO = Read-Host "Unidad organizativa"
 	if ( "existOu $UO" -NotMatch "$UO" ) { 
-		Write-Host "La unidad organizativa $UO no existe" 
+		Write-Host "La unidad organizativa ${UO} no existe" 
 	}
 	else {
-		Write-Host "Busqueda de datos de la unidad organizativa $UO: "
+		Write-Host "Busqueda de datos de la unidad organizativa $UO"
 		Get-ADOrganizationalUnit "OU=$UO,$DC"
 		Start-Sleep -Seconds 3
 	}
@@ -28,7 +28,7 @@ function getOu {
 function getAllOus() {
 	Clear-Host;Write-Host "Obtener todas las unidades organizativas"
 	Write-Host "¿Desea obtenerlas con todas sus propiedades?"
-	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n"): " 
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
 		# Obtenga todas las propiedades de todas las unidades organizativas.
@@ -53,9 +53,9 @@ function getAllOus() {
 function addOu {
 	Clear-Host;Write-Host "Crear una unidad organizativa"
 	# Solicitar unidad organizativa sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
-	$UO = Read-Host "Unidad organizativa: "
+	$UO = Read-Host "Unidad organizativa"
 	while ( "existOu $UO" -Match "$UO" ) {
-		$UO = Read-Host "Unidad organizativa $UO ya existe, ingrese nuevo: "
+		$UO = Read-Host "Unidad organizativa $UO ya existe, ingrese nuevo"
 	}
 	# Crear unidad organizativa
 	New-ADOrganizationalUnit $UO -Path "$DC"
@@ -67,7 +67,7 @@ function delOu {
 	# Solicitar unidad organizativa sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa: "
 	while ( "existOu $UO" -NotMatch "$UO" ) {
-		$GRUPO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo: "
+		$GRUPO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo"
 	}
 	Remove-ADOrganizationalUnit "OU=$UO,$DC" -Recursive
 }
@@ -89,7 +89,7 @@ function getOptions{
 getOptions
  
 # Leer la opcion introducida por el usuario
-$OPCION = Read-Host "Introduzca una opcion: "
+$OPCION = Read-Host "Introduzca una opcion"
 
 # Bucle para permanecer en el menu hasta que el usuario introduzca la opcion 5
 while($OPCION -ne 5)
@@ -106,5 +106,5 @@ while($OPCION -ne 5)
 	# Volvemos a ejecutar la funcion para que muestre las opciones del menu
     getOptions
 	# Leer la nueva opcion introducida por el usuario
-    $OPCION = Read-Host "Introduzca una nueva opcion: "
+    $OPCION = Read-Host "Introduzca una nueva opcion"
 }

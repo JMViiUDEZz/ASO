@@ -9,7 +9,7 @@
 function getAll {
 	Clear-Host;Write-Host "Mostrar informacion del dominio..."
 	Write-Host "¿Cual de los siguientes opciones desea utilizar respecto al dominio $DOMAIN?"
-	$RESPUESTA = Read-Host "[scd] Su controlador de dominio [lcd] Lista controladores de dominio [ccd] Contar controladores de dominio: (por defecto es "d"): " 
+	$RESPUESTA = Read-Host "[scd] Su controlador de dominio [lcd] Lista controladores de dominio [ccd] Contar controladores de dominio: (por defecto es "d")" 
 	if ( "$RESPUESTA" -Match "scd" ) {
 		Write-Host "Ha seleccionado la opcion [scd]"
 		# Mostrar el controlador de dominio al que pertenece su computadora
@@ -36,23 +36,23 @@ function getAll {
 function imUsers {
 	Clear-Host;Write-Host "Importar usuarios..."
 	# Introducir un archivo de importacion
-	$IMPFILE = Read-Host "Introduce la ruta del archivo de importacion: " 
+	$IMPFILE = Read-Host "Introduce la ruta del archivo de importacion" 
 	# Comprobar que el archivo de importacion introducido existe
 	$EXISTFILE = Test-Path $IMPFILE	
 	if ( $EXISTFILE -eq $True ) {
 		Write-Host "El archivo de importacion existe..."
 		# Importar usuarios
-		Ldifde –i -f $IMPFILE
+		Ldifde -i -f $IMPFILE
 	}
 	elseif ( ( $EXISTFILE -eq $False ) -and ( $IMPFILE -Match "" ) ) {
 		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion..."
 		# Importar usuarios
-		Ldifde –i -f $DEFIMPFILE
+		Ldifde -i -f $DEFIMPFILE
 	}
 	else {
 		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion..."
 		# Importar usuarios
-		Ldifde –i -f $DEFIMPFILE
+		Ldifde -i -f $DEFIMPFILE
 	}
 }
 
@@ -67,22 +67,22 @@ function exUsers {
 		Write-Host "El archivo de exportacion ya existe, por lo que se eliminara para poder reemplazarlo..."
 		Remove-Item $EXPFILE	
 		# Exportar usuarios
-		Ldifde –r "objectClass=User" –f $EXPFILE
+		Ldifde -r "objectClass=User" -f $EXPFILE
 	}
 	elseif ( $EXISTFILE -eq $False ) {
 		Write-Host "El archivo de exportacion no existe..."
 		# Exportar usuarios
-		Ldifde –r "objectClass=User" –f $EXPFILE
+		Ldifde -r "objectClass=User" -f $EXPFILE
 	}
 	elseif ( ( $EXISTFILE -eq $False ) -and ( $EXPFILE -Match "" ) ) {
 		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion"
 		# Exportar usuarios
-		Ldifde -r "objectClass=User" –f $DEFEXPFILE
+		Ldifde -r "objectClass=User" -f $DEFEXPFILE
 	}
 	else {
 		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion"
 		# Exportar usuarios
-		Ldifde -r "objectClass=User" –f $DEFEXPFILE
+		Ldifde -r "objectClass=User" -f $DEFEXPFILE
 	}
 }
 
@@ -105,7 +105,7 @@ function getOptions{
 getOptions
  
 # Leer la opcion introducida por el usuario
-$OPCION = Read-Host "Introduzca una opcion: "
+$OPCION = Read-Host "Introduzca una opcion"
 
 # Bucle para permanecer en el menu hasta que el usuario introduzca la opcion 7
 while($OPCION -ne 7)
@@ -124,5 +124,5 @@ while($OPCION -ne 7)
 	# Volvemos a ejecutar la funcion para que muestre las OPCIONes del menu
     getOptions
 	# Leer la nueva opcion introducida por el usuario
-    $OPCION = Read-Host "Introduzca una nueva opcion: "
+    $OPCION = Read-Host "Introduzca una nueva opcion"
 }
