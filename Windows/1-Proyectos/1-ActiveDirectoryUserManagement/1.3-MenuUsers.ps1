@@ -261,17 +261,101 @@ function delUser {
 	Remove-ADUser $USUARIO
 }
 
+# Obtener informacion del dominio
+function getAll {
+	Clear-Host;Write-Host "Obtener informacion del dominio..."
+	Write-Host "¿Cual de los siguientes opciones desea utilizar respecto al dominio $DOMAIN?"
+	$RESPUESTA = Read-Host "[scd] Su controlador de dominio [lcd] Lista controladores de dominio [ccd] Contar controladores de dominio: (por defecto es "d")" 
+	if ( "$RESPUESTA" -Match "scd" ) {
+		Write-Host "Ha seleccionado la opcion [scd]"
+		# Obtener el controlador de dominio al que pertenece su computadora
+		Get-ADDomainController –Discover
+	}
+	elseif ( "$RESPUESTA" -Match "lcd" ) {
+		Write-Host "Ha seleccionado la opcion [lcd]"
+		# Obtener la lista de todos los controladores de dominio
+		Get-ADDomainController -Filter * | ft
+	}
+	elseif ( "$RESPUESTA" -Match "ccd" ) {
+		Write-Host "Ha seleccionado la opcion [ccd]"
+		# Contar la cantidad de controladores de dominio
+		Get-ADDomainController -Filter * | Measure-Object
+	}
+	else {
+		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [g]"
+		# Enumerar miembros de un grupo
+		Get-ADGroupMember "$GRUPO"
+	}
+}
+
+# Importar usuarios
+function imUsers {
+	Clear-Host;Write-Host "Importar usuarios..."
+	# Introducir un archivo de importacion
+	$IMPFILE = Read-Host "Introduce la ruta del archivo de importacion" 
+	# Comprobar que el archivo de importacion introducido existe
+	$EXISTFILE = Test-Path $IMPFILE	
+	if ( $EXISTFILE -eq $True ) {
+		Write-Host "El archivo de importacion existe..."
+		# Importar usuarios
+		Ldifde -i -f $IMPFILE
+	}
+	elseif ( ( $EXISTFILE -eq $False ) -and ( $IMPFILE -Match "" ) ) {
+		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion..."
+		# Importar usuarios
+		Ldifde -i -f $DEFIMPFILE
+	}
+	else {
+		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion..."
+		# Importar usuarios
+		Ldifde -i -f $DEFIMPFILE
+	}
+}
+
+# Exportar usuarios
+function exUsers {
+	Clear-Host;Write-Host "Exportar usuarios..."
+	# Introducir un archivo de exportacion
+	$EXPFILE = Read-Host "Introduce la ruta del archivo de exportacion: " 
+	# Comprobar que el archivo de exportacion introducido no existe
+	$EXISTFILE = Test-Path $EXPFILE	
+	if ( $EXISTFILE -eq $True ) {
+		Write-Host "El archivo de exportacion ya existe, por lo que se eliminara para poder reemplazarlo..."
+		Remove-Item $EXPFILE	
+		# Exportar usuarios
+		Ldifde -r "objectClass=User" -f $EXPFILE
+	}
+	elseif ( $EXISTFILE -eq $False ) {
+		Write-Host "El archivo de exportacion no existe..."
+		# Exportar usuarios
+		Ldifde -r "objectClass=User" -f $EXPFILE
+	}
+	elseif ( ( $EXISTFILE -eq $False ) -and ( $EXPFILE -Match "" ) ) {
+		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion"
+		# Exportar usuarios
+		Ldifde -r "objectClass=User" -f $DEFEXPFILE
+	}
+	else {
+		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion"
+		# Exportar usuarios
+		Ldifde -r "objectClass=User" -f $DEFEXPFILE
+	}
+}
+
 # Limpiar la pantalla al lanzar el menu
 Clear-Host
 
 # Funcion que muestra las opciones del menu
 function getOptions{
-    Write-Host "1. Crear un usuario"
-    Write-Host "2. Obtener todos los usuarios"
-	Write-Host "3. Obtener un usuario"
-    Write-Host "4. Modificar un usuario"
-	Write-Host "5. Eliminar un usuario"
-    Write-Host "6. Cerrar el programa"    
+	Write-Host "1. Obtener informacion del dominio"
+    Write-Host "2. Crear un usuario"
+    Write-Host "3. Obtener todos los usuarios"
+	Write-Host "4. Obtener un usuario"
+    Write-Host "5. Modificar un usuario"
+	Write-Host "6. Eliminar un usuario"
+	Write-Host "7. Importar usuarios"
+	Write-Host "8. Exportar usuarios"
+    Write-Host "9. Cerrar el programa"    
 }
  
 # Ejecucion de la funcion para que muestre las opciones del menu
@@ -280,18 +364,21 @@ getOptions
 # Leer la opcion introducida por el usuario
 $OPCION = Read-Host "Introduzca una opcion"
 
-# Bucle para permanecer en el menu hasta que el usuario introduzca la opcion 6
-while($OPCION -ne 6)
+# Bucle para permanecer en el menu hasta que el usuario introduzca la opcion 9
+while($OPCION -ne 9)
 {
 	# Comprobar que ha introducido el usuario
     switch($OPCION)
     {
-        1{addUser}
-        2{getAllUsers}
-		3{getUser}
-        4{modUser}
-        5{delUser}
-		6{exit}
+		1{getAll}
+        2{addUser}
+        3{getAllUsers}
+		4{getUser}
+        5{modUser}
+        6{delUser}
+		7{imUsers}
+		8{exUsers}
+		9{exit}
     }
 	# Volvemos a ejecutar la funcion para que muestre las opciones del menu
     getOptions
