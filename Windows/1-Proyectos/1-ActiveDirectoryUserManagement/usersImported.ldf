@@ -1,0 +1,32 @@
+dn: CN=Jose Antonio Morgado,OU=usuarios,DC=asir,DC=local
+changetype: add
+objectClass: User
+cn: Jose Antonio Morgado
+SAMAccountName: jmorgado
+givenName: Jose Antonio
+sn: Morgado
+mail: jmorgado@asir.local
+homePhone: 611111111
+userPassword: jose2019+
+
+dn: CN=Marco Antonio Jimenez,OU=usuarios,DC=asir,DC=local
+changetype: add
+objectClass: User
+cn: Marco Antonio Jimenez
+SAMAccountName: mjimenez
+givenName: Marco Antonio
+sn: Jimenez
+mail: mjimenez@asir.local
+homePhone: 622222222
+userPassword: jose2019+
+
+dn: CN=Gines Angel Esteban,OU=usuarios,DC=asir,DC=local
+changetype: add
+objectClass: User
+cn: Gines Angel Esteban
+SAMAccountName: gesteban
+givenName: Gines Angel
+sn: Esteban
+mail: gesteban@asir.local
+homePhone: 633333333
+userPassword: jose2019+
