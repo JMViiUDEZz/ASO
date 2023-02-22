@@ -39,7 +39,7 @@ function existOu {
 function modPasswd {
 	Clear-Host;Write-Host "Cambiar clave a un usuario..."
 	# Solicitar confirmacion para cambiar la clave del usuario que se muestra
-	Write-Host "¿Desea establecer una contraseña al usuario $1?"
+	Write-Host "¿Desea establecer una contraseña al usuario $USUARIO?"
 	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
@@ -66,12 +66,12 @@ function modPasswd {
 	elseif ( "$RESPUESTA" -Match "n" ) {
 		Write-Host "Ha seleccionado la opcion [n]"
 		Write-Host "Al no establecerla, el usuario debera cambiarla en el proximo intento de inicio de sesion."
-		Set-ADUser $1 -ChangePasswordAtLogon $True
+		Set-ADUser $USUARIO -ChangePasswordAtLogon $True
 	}
 	else {
 		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
 		Write-Host "Al no establecerla, el usuario debera cambiarla en el proximo intento de inicio de sesion."
-		Set-ADUser $1 -ChangePasswordAtLogon $True
+		Set-ADUser $USUARIO -ChangePasswordAtLogon $True
 	}
 }
 
@@ -91,7 +91,7 @@ function getModPasswd {
 # Verificar que la clave cumpla unas minimas condiciones 
 function checkModPasswd {
 	# Copiar clave
-	PASSWORD=$1
+	PASSWORD=$PASSWORD
 	# Se asume que la clave es valida
 	PASSWORD_OK=0
 	# Si la clave es igual a 1, estas son diferentes
@@ -106,22 +106,22 @@ function enDisUser {
 	Write-Host "Lista de cuentas de usuario deshabilitadas"
 	# Obtenga la lista de cuentas de usuario deshabilitadas.
 	Search-ADAccount -AccountDisabled | select Name, SamAccountName
-	Write-Host "¿Desea activar la cuenta del usuario $1?"
+	Write-Host "¿Desea activar la cuenta del usuario $USUARIO?"
 	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
-		Write-Host "Activando la cuenta del usuario $1"
-		Enable-ADAccount $1
+		Write-Host "Activando la cuenta del usuario $USUARIO"
+		Enable-ADAccount $USUARIO
 	}
 	elseif ( "$RESPUESTA" -Match "n" ) {
 		Write-Host "Ha seleccionado la opcion [n]"
-		Write-Host "Desactivando la cuenta del usuario $1"
-		Disable-ADAccount $1
+		Write-Host "Desactivando la cuenta del usuario $USUARIO"
+		Disable-ADAccount $USUARIO
 	}
 	else {
 		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
-		Write-Host "Desactivando la cuenta del usuario $1"
-		Disable-ADAccount $1
+		Write-Host "Desactivando la cuenta del usuario $USUARIO"
+		Disable-ADAccount $USUARIO
 	}
 }
 
@@ -130,12 +130,12 @@ function unUser {
 	Write-Host "Lista de cuentas de usuario bloqueadas: "
 	# Obtenga la lista de cuentas de usuario bloqueadas.
 	Search-ADAccount -LockedOut | select Name, SamAccountName
-	Write-Host "¿Desea Desbloquear la cuenta del usuario $1?"
+	Write-Host "¿Desea Desbloquear la cuenta del usuario $USUARIO?"
 	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
-		Write-Host "Desbloqueando la cuenta del usuario $1"
-		Unlock-ADAccount $1
+		Write-Host "Desbloqueando la cuenta del usuario $USUARIO"
+		Unlock-ADAccount $USUARIO
 	}
 	elseif ( "$RESPUESTA" -Match "n" ) {
 		Write-Host "Ha seleccionado la opcion [n]"
