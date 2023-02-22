@@ -18,18 +18,14 @@ $DEFIMPFILE="$DIRPS1\usersImported.ldf"
 $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 # En este caso, las variables se han declarado en el propio script
 
-# Verifica si una unidad organizativa existe
-function existOu {
-	$GetOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
-	$ErrorActionPreference = "SilentlyContinue"
-}
-
 # Obtener una unidad organizativa, si existe
 function getOu {
 	Clear-Host;Write-Host "Obtener una unidad organizativa, si existe"
 	$UO = Read-Host "Unidad organizativa"
-	existOu
-	if ( "$GetOu" -Match "$UO") { 
+	# Verifica si una unidad organizativa existe
+	$existOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
+	$ErrorActionPreference = "SilentlyContinue"
+	if ( "$existOu" -Match "$UO") { 
 		Write-Host "Busqueda de datos de la unidad organizativa $UO"
 		Get-ADOrganizationalUnit "OU=$UO,$DC"
 		Start-Sleep -Seconds 3
@@ -69,8 +65,10 @@ function addOu {
 	Clear-Host;Write-Host "Crear una unidad organizativa"
 	# Solicitar unidad organizativa sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa"
-	existOu
-	while ( "$GetOu" -Match "$UO" ) {
+	# Verifica si una unidad organizativa existe
+	$existOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existOu" -Match "$UO" ) {
 		$UO = Read-Host "Unidad organizativa $UO ya existe, ingrese nuevo"
 	}
 	# Crear unidad organizativa
@@ -82,8 +80,10 @@ function delOu {
 	Clear-Host;Write-Host "Eliminar una unidad organizativa"
 	# Solicitar unidad organizativa sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa: "
-	existOu
-	while ( "$GetOu" -NotMatch "$UO" ) {
+	# Verifica si una unidad organizativa existe
+	$existOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existOu" -NotMatch "$UO" ) {
 		$GRUPO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo"
 	}
 	Remove-ADOrganizationalUnit "OU=$UO,$DC" -Recursive

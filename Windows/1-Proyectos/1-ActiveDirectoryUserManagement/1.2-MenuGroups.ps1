@@ -18,24 +18,14 @@ $DEFIMPFILE="$DIRPS1\usersImported.ldf"
 $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 # En este caso, las variables se han declarado en el propio script
 
-# Verifica si un grupo existe
-function existGroup {
-	$GetGroup = (Get-ADGroup $GRUPO).Name
-	$ErrorActionPreference = "SilentlyContinue"
-}
-
-# Verifica si un usuario existe
-function existUser {
-	$GetUser = (Get-ADUser $USUARIO).SamAccountName
-	$ErrorActionPreference = "SilentlyContinue"
-}
-
 # Obtener un grupo, si existe
 function getGroup() {
 	Clear-Host;Write-Host "Obtener un grupo, si existe"
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
-	if ( "$GetGroup" -NotMatch "$GRUPO" ) {
+	# Verifica si un grupo existe
+	$existGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
+	if ( "$existGroup" -NotMatch "$GRUPO" ) {
 		Write-Host "El grupo $GRUPO no existe"
 	}
 	else {
@@ -75,8 +65,10 @@ function addGroup() {
 	Clear-Host;Write-Host "Crear un grupo"
 	# Solicitar grupo sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
-	while ( "$GetGroup" -Match "$GRUPO" ) {
+	# Verifica si un grupo existe
+	$existGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existGroup" -Match "$GRUPO" ) {
 		$GRUPO = Read-Host "Grupo $GRUPO ya existe, ingrese nuevo"
 	}
 	Write-Host "¿Cual de los siguientes valores desea establecer para el parametro GroupScope al grupo $GRUPO?"
@@ -108,8 +100,10 @@ function delGroup() {
 	Clear-Host;Write-Host "Eliminar un grupo"
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
-	while ( "$GetGroup" -NotMatch "$GRUPO" ) {
+	# Verifica si un grupo existe
+	$existGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existGroup" -NotMatch "$GRUPO" ) {
 		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	Remove-ADGroup $GRUPO 
@@ -121,14 +115,18 @@ function modGroup {
 	# Modificar un grupo
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
-	while ( "$GetGroup" -NotMatch "$GRUPO" ) {
+	# Verifica si un grupo existe
+	$existGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existGroup" -NotMatch "$GRUPO" ) {
 		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
-	existUser
-	while ( "$GetUser" -NotMatch "$USUARIO" ) {
+	# Verifica si un usuario existe
+	$existUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}		
 	Write-Host "¿Cual de los siguientes opciones desea usar para modificar el grupo $GRUPO, respecto al usuario $USUARIO introducido previamente?"

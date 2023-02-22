@@ -18,23 +18,6 @@ $DEFIMPFILE="$DIRPS1\usersImported.ldf"
 $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 # En este caso, las variables se han declarado en el propio script
 
-# Verifica si un usuario existe
-function existUser {
-	$GetUser = (Get-ADUser $USUARIO).SamAccountName
-	$ErrorActionPreference = "SilentlyContinue"
-}
-
-function existUserName {
-	$GetUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
-	$ErrorActionPreference = "SilentlyContinue"
-}
-
-# Verifica si una unidad organizativa existe
-function existOu {
-	$GetOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
-	$ErrorActionPreference = "SilentlyContinue"
-}
-
 # Asignar clave a un usuario
 function modPasswd {
 	Clear-Host;Write-Host "Cambiar clave a un usuario..."
@@ -149,8 +132,10 @@ function unUser {
 function getUser {
 	Clear-Host;Write-Host "Obtener un usuario, si existe"
 	$USUARIO = Read-Host "Usuario"
-	existUser
-	if ( "$GetUser" -NotMatch "$USUARIO" ) {
+	# Verifica si un usuario existe
+	$existUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
+	if ( "$existUser" -NotMatch "$USUARIO" ) {
 		Write-Host "El usuario $USUARIO no existe"
 		Write-Host "¿Desea obtenerlo mediante su nombre y apellido?"
 		$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
@@ -158,8 +143,10 @@ function getUser {
 			Write-Host "Ha seleccionado la opcion [y]"
 			$NOMBRE = Read-Host "Nombre"
 			$APELLIDO = Read-Host "Apellido"
-			existUserName
-			if ( " $GetUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
+			# Verifica si un usuario existe
+			$existUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
+			$ErrorActionPreference = "SilentlyContinue"
+			if ( " $existUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
 				Write-Host "El usuario $USUARIO llamado $NOMBRE $APELLIDO no existe"
 			}
 			else {
@@ -215,8 +202,10 @@ function getAllUsers {
 function getAllUsersOu() {
 	Clear-Host;Write-Host "Obtener todos los usuarios de una unidad organizativa"
 	$OU = Read-Host "Unidad organizativa"
-	existOu
-	if ( "$GetOu" -NotMatch "$OU" ) {
+	# Verifica si una unidad organizativa existe
+	$existOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
+	$ErrorActionPreference = "SilentlyContinue"
+	if ( "$existOu" -NotMatch "$OU" ) {
 		Write-Host "La unidad organizativa $OU no existe"
 	}
 	else {
@@ -232,8 +221,10 @@ function addUser {
 	Clear-Host;Write-Host "Crear un usuario"
 	# Solicitar usuario sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
-	existUser
-	while ( "$GetUser" -Match "$USUARIO" ) {
+	# Verifica si un usuario existe
+	$existUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( "$existUser" -Match "$USUARIO" ) {
 		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}
 	# Solicitar otros campos del usuario
@@ -253,8 +244,10 @@ function modUser {
 	# Modificar un usuario
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario"
-	existUser
-	while ( " $GetUser" -NotMatch "$USUARIO" ) {
+	# Verifica si un usuario existe
+	$existUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( " $existUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo: "
 	}
 	# Solicitar otros campos del usuario
@@ -276,8 +269,10 @@ function delUser {
 	Clear-Host;Write-Host "Eliminar un usuario"
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario"
-	existUser
-	while ( " $GetUser" -NotMatch "$USUARIO" ) {
+	# Verifica si un usuario existe
+	$existUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
+	while ( " $existUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo"
 	}
 	Remove-ADUser $USUARIO
