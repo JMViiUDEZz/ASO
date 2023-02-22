@@ -54,11 +54,12 @@ function modPasswd {
 				# break
 			# }
 			# Verificar salida comando
-			# $checkModPasswd = Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
-			# if ( $? -ne $True ) {
-				# Write-Host "[ERROR] - La clave no cumple lo minimo requerido"
-				# PASSWORD_OK=1
-			# }
+			$ErrorActionPreference = "SilentlyContinue"
+			$checkModPasswd = Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
+			if ( $? -eq $False ) {
+				Write-Host "[ERROR] - La clave no cumple lo minimo requerido"
+				PASSWORD_OK=1
+			}
 		}
 		Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
 	}
