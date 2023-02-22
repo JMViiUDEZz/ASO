@@ -31,7 +31,7 @@ function existUserName {
 
 # Verifica si una unidad organizativa existe
 function existOu {
-	$GetOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
+	$GetOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
