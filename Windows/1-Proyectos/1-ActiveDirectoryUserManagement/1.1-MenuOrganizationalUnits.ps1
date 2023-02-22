@@ -27,14 +27,23 @@ function existOu {
 function getOu {
 	Clear-Host;Write-Host "Obtener una unidad organizativa, si existe"
 	$UO = Read-Host "Unidad organizativa"
-	if ( "existOu $UO" -NotMatch "$UO" ) { 
-		Write-Host "La unidad organizativa ${UO} no existe" 
-	}
-	else {
+	$existOu = Get-ADOrganizationalUnit "SAMAccountName -eq '$UO'"
+	if ( $existOu ) { 
 		Write-Host "Busqueda de datos de la unidad organizativa $UO"
 		Get-ADOrganizationalUnit "OU=$UO,$DC"
 		Start-Sleep -Seconds 3
 	}
+	else {
+		Write-Host "La unidad organizativa ${UO} no existe"
+	}
+	# if ( "existOu $UO" -NotMatch "$UO" ) { 
+		# Write-Host "La unidad organizativa ${UO} no existe" 
+	# }
+	# else {
+		# Write-Host "Busqueda de datos de la unidad organizativa $UO"
+		# Get-ADOrganizationalUnit "OU=$UO,$DC"
+		# Start-Sleep -Seconds 3
+	# }
 }
 
 # Obtener todas las unidades organizativas
