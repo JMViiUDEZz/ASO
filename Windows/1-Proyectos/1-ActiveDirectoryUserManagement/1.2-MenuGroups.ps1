@@ -20,13 +20,13 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 
 # Verifica si un grupo existe
 function existGroup {
-	$getGroup = (Get-ADGroup $GRUPO).Name
+	$GetGroup = (Get-ADGroup $GRUPO).Name
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
 # Verifica si un usuario existe
 function existUser {
-	$getUser = (Get-ADUser $USUARIO).SamAccountName
+	$GetUser = (Get-ADUser $USUARIO).SamAccountName
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
@@ -35,7 +35,7 @@ function getGroup() {
 	Clear-Host;Write-Host "Obtener un grupo, si existe"
 	$GRUPO = Read-Host "Grupo: "
 	existGroup
-	if ( "$getGroup" -NotMatch "$GRUPO" ) {
+	if ( "$GetGroup" -NotMatch "$GRUPO" ) {
 		Write-Host "El grupo $GRUPO no existe"
 	}
 	else {
@@ -76,7 +76,7 @@ function addGroup() {
 	# Solicitar grupo sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
 	existGroup
-	while ( "$getGroup" -Match "$GRUPO" ) {
+	while ( "$GetGroup" -Match "$GRUPO" ) {
 		$GRUPO = Read-Host "Grupo $GRUPO ya existe, ingrese nuevo"
 	}
 	Write-Host "¿Cual de los siguientes valores desea establecer para el parametro GroupScope al grupo $GRUPO?"
@@ -109,7 +109,7 @@ function delGroup() {
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
 	existGroup
-	while ( "$getGroup" -NotMatch "$GRUPO" ) {
+	while ( "$GetGroup" -NotMatch "$GRUPO" ) {
 		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	Remove-ADGroup $GRUPO 
@@ -122,13 +122,13 @@ function modGroup {
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
 	existGroup
-	while ( "$getGroup" -NotMatch "$GRUPO" ) {
+	while ( "$GetGroup" -NotMatch "$GRUPO" ) {
 		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
 	existUser
-	while ( "$getUser" -NotMatch "$USUARIO" ) {
+	while ( "$GetUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}		
 	Write-Host "¿Cual de los siguientes opciones desea usar para modificar el grupo $GRUPO, respecto al usuario $USUARIO introducido previamente?"

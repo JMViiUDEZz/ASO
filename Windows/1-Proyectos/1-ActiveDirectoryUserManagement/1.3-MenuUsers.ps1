@@ -20,18 +20,18 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 
 # Verifica si un usuario existe
 function existUser {
-	$getUser = (Get-ADUser $USUARIO).SamAccountName
+	$GetUser = (Get-ADUser $USUARIO).SamAccountName
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
 function existUserName {
-	$getUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
+	$GetUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
 # Verifica si una unidad organizativa existe
 function existOu {
-	$getOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
+	$GetOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
@@ -150,7 +150,7 @@ function getUser {
 	Clear-Host;Write-Host "Obtener un usuario, si existe"
 	$USUARIO = Read-Host "Usuario"
 	existUser
-	if ( "$getUser" -NotMatch "$USUARIO" ) {
+	if ( "$GetUser" -NotMatch "$USUARIO" ) {
 		Write-Host "El usuario $USUARIO no existe"
 		Write-Host "¿Desea obtenerlo mediante su nombre y apellido?"
 		$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
@@ -159,7 +159,7 @@ function getUser {
 			$NOMBRE = Read-Host "Nombre"
 			$APELLIDO = Read-Host "Apellido"
 			existUserName
-			if ( " $getUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
+			if ( " $GetUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
 				Write-Host "El usuario $USUARIO llamado $NOMBRE $APELLIDO no existe"
 			}
 			else {
@@ -216,7 +216,7 @@ function getAllUsersOu() {
 	Clear-Host;Write-Host "Obtener todos los usuarios de una unidad organizativa"
 	$OU = Read-Host "Unidad organizativa"
 	existOu
-	if ( "$getOu" -NotMatch "$OU" ) {
+	if ( "$GetOu" -NotMatch "$OU" ) {
 		Write-Host "La unidad organizativa $OU no existe"
 	}
 	else {
@@ -233,7 +233,7 @@ function addUser {
 	# Solicitar usuario sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
 	existUser
-	while ( "$getUser" -Match "$USUARIO" ) {
+	while ( "$GetUser" -Match "$USUARIO" ) {
 		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}
 	# Solicitar otros campos del usuario
@@ -254,7 +254,7 @@ function modUser {
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario"
 	existUser
-	while ( " $getUser" -NotMatch "$USUARIO" ) {
+	while ( " $GetUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo: "
 	}
 	# Solicitar otros campos del usuario
@@ -277,7 +277,7 @@ function delUser {
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario"
 	existUser
-	while ( " $getUser" -NotMatch "$USUARIO" ) {
+	while ( " $GetUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo"
 	}
 	Remove-ADUser $USUARIO

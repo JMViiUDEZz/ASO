@@ -20,7 +20,7 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 
 # Verifica si una unidad organizativa existe
 function existOu {
-	$getOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
+	$GetOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
 	$ErrorActionPreference = "SilentlyContinue"
 }
 
@@ -29,7 +29,7 @@ function getOu {
 	Clear-Host;Write-Host "Obtener una unidad organizativa, si existe"
 	$UO = Read-Host "Unidad organizativa"
 	existOu
-	if ( "$getOu" -Match "$UO") { 
+	if ( "$GetOu" -Match "$UO") { 
 		Write-Host "Busqueda de datos de la unidad organizativa $UO"
 		Get-ADOrganizationalUnit "OU=$UO,$DC"
 		Start-Sleep -Seconds 3
@@ -70,7 +70,7 @@ function addOu {
 	# Solicitar unidad organizativa sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa"
 	existOu
-	while ( "$getOu" -Match "$UO" ) {
+	while ( "$GetOu" -Match "$UO" ) {
 		$UO = Read-Host "Unidad organizativa $UO ya existe, ingrese nuevo"
 	}
 	# Crear unidad organizativa
@@ -83,7 +83,7 @@ function delOu {
 	# Solicitar unidad organizativa sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa: "
 	existOu
-	while ( "$getOu" -NotMatch "$UO" ) {
+	while ( "$GetOu" -NotMatch "$UO" ) {
 		$GRUPO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo"
 	}
 	Remove-ADOrganizationalUnit "OU=$UO,$DC" -Recursive
