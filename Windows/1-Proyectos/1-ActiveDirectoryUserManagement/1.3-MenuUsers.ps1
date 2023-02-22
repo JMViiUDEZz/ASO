@@ -20,16 +20,19 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 
 # Verifica si un usuario existe
 function existUser {
-	(Get-ADUser $1).SamAccountName
+	$getUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
 }
 
 function existUserName {
-	# Obtenga todos los usuarios con un texto especifico en el nombre.
-	(Get-Aduser -Filter { Name -like "*$1 $2*"}).Name
+	$getUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
+	$ErrorActionPreference = "SilentlyContinue"
 }
+
 # Verifica si una unidad organizativa existe
 function existOu {
-	(Get-ADOrganizationalUnit "OU=$1,$DC").Name
+	$getOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
+	$ErrorActionPreference = "SilentlyContinue"
 }
 
 # Asignar clave a un usuario
@@ -47,16 +50,17 @@ function modPasswd {
 			# Verificar clave sabiendo que si no es valida, se vuelve a pedir
 			checkModPasswd $PASSWORD
 			# Si la clave es valida, se rompe el bucle
-			# if ( $PASSWORD_OK -eq 0 ]; then
+			# if ( $PASSWORD_OK -eq 0 ) {
 				# break
-			# fi
+			# }
 			# Verificar salida comando
-			Set-ADAccountPassword $1 -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
-			if ( $? -ne $True ) {
-				Write-Host "[ERROR] - La clave no cumple lo minimo requerido"
-				PASSWORD_OK=1
-			}
+			# $checkModPasswd = Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
+			# if ( $? -ne $True ) {
+				# Write-Host "[ERROR] - La clave no cumple lo minimo requerido"
+				# PASSWORD_OK=1
+			# }
 		}
+		Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
 	}
 	elseif ( "$RESPUESTA" -Match "n" ) {
 		Write-Host "Ha seleccionado la opcion [n]"
@@ -74,7 +78,6 @@ function modPasswd {
 function getModPasswd {
 	$PASSWORD1 = Read-Host "Contraseña"
 	$PASSWORD2 = Read-Host "Repetir contraseña"
-	# stty -Write-Host; Read-Host PASSWORD2; stty Write-Host; Write-Host ""
 	# Si las claves son diferentes, se piden de nuevo
 	if ( "$PASSWORD1" -NotMatch "$PASSWORD2" ) {
 		PASSWORD=1
@@ -145,7 +148,8 @@ function unUser {
 function getUser {
 	Clear-Host;Write-Host "Obtener un usuario, si existe"
 	$USUARIO = Read-Host "Usuario"
-	if ( "existUser $USUARIO" -NotMatch "$USUARIO" ) {
+	existUser
+	if ( "$getUser" -NotMatch "$USUARIO" ) {
 		Write-Host "El usuario $USUARIO no existe"
 		Write-Host "¿Desea obtenerlo mediante su nombre y apellido?"
 		$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
@@ -153,13 +157,14 @@ function getUser {
 			Write-Host "Ha seleccionado la opcion [y]"
 			$NOMBRE = Read-Host "Nombre"
 			$APELLIDO = Read-Host "Apellido"
-			if ( "existUserName $NOMBRE $APELLIDO" -NotLike "*$NOMBRE $APELLIDO*" ) {
+			existUserName
+			if ( " $getUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
 				Write-Host "El usuario $USUARIO llamado $NOMBRE $APELLIDO no existe"
 			}
 			else {
 				Write-Host "Busqueda de datos del usuario $USUARIO llamado $NOMBRE ${APELLIDO}: "
 				# Obtenga todos los usuarios con un texto especifico en el nombre.
-				Get-Aduser -Filter { Name -like "existUserName $NOMBRE $APELLIDO"}
+				Get-Aduser -Filter { Name -like "*$NOMBRE $APELLIDO*"}
 				Start-Sleep -Seconds 3
 			}
 		}
@@ -209,7 +214,8 @@ function getAllUsers {
 function getAllUsersOu() {
 	Clear-Host;Write-Host "Obtener todos los usuarios de una unidad organizativa"
 	$OU = Read-Host "Unidad organizativa"
-	if ( "existOu $OU" -NotMatch "$OU" ) {
+	existOu
+	if ( "$getOu" -NotMatch "$OU" ) {
 		Write-Host "La unidad organizativa $OU no existe"
 	}
 	else {
@@ -225,13 +231,13 @@ function addUser {
 	Clear-Host;Write-Host "Crear un usuario"
 	# Solicitar usuario sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
-	while ( "existUser $USUARIO" -Match "$USUARIO" ) {
+	existUser
+	while ( "$getUser" -Match "$USUARIO" ) {
 		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}
 	# Solicitar otros campos del usuario
 	$NOMBRE = Read-Host "Nombre"
 	$APELLIDO = Read-Host "Apellido"
-	# $GRUPO = Read-Host "Grupo principal (getAllGroups): " GRUPO
 	# Crear usuario
 	New-ADUser "$NOMBRE $APELLIDO" -Path "OU=$UO,$DC" -SamAccountName $USUARIO -GivenName "$NOMBRE" -SurName "$APELLIDO"
 	# Asignar clave al usuario
@@ -246,7 +252,8 @@ function modUser {
 	# Modificar un usuario
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario"
-	while ( "existUser $USUARIO" -NotMatch "$USUARIO" ) {
+	existUser
+	while ( " $getUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo: "
 	}
 	# Solicitar otros campos del usuario
@@ -268,7 +275,8 @@ function delUser {
 	Clear-Host;Write-Host "Eliminar un usuario"
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario"
-	while ( "existUser $USUARIO" -NotMatch "$USUARIO" ) {
+	existUser
+	while ( " $getUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo"
 	}
 	Remove-ADUser $USUARIO

@@ -20,15 +20,16 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 
 # Verifica si una unidad organizativa existe
 function existOu {
-	(Get-ADOrganizationalUnit "OU=$1,$DC").Name
+	$getOu = (Get-ADOrganizationalUnit "OU=$OU,$DC").Name
+	$ErrorActionPreference = "SilentlyContinue"
 }
 
 # Obtener una unidad organizativa, si existe
 function getOu {
 	Clear-Host;Write-Host "Obtener una unidad organizativa, si existe"
 	$UO = Read-Host "Unidad organizativa"
-	$existOu = Get-ADOrganizationalUnit "SAMAccountName -eq '$UO'"
-	if ( $existOu ) { 
+	existOu
+	if ( "$getOu" -Match "$UO") { 
 		Write-Host "Busqueda de datos de la unidad organizativa $UO"
 		Get-ADOrganizationalUnit "OU=$UO,$DC"
 		Start-Sleep -Seconds 3
@@ -36,14 +37,6 @@ function getOu {
 	else {
 		Write-Host "La unidad organizativa ${UO} no existe"
 	}
-	# if ( "existOu $UO" -NotMatch "$UO" ) { 
-		# Write-Host "La unidad organizativa ${UO} no existe" 
-	# }
-	# else {
-		# Write-Host "Busqueda de datos de la unidad organizativa $UO"
-		# Get-ADOrganizationalUnit "OU=$UO,$DC"
-		# Start-Sleep -Seconds 3
-	# }
 }
 
 # Obtener todas las unidades organizativas
@@ -76,7 +69,8 @@ function addOu {
 	Clear-Host;Write-Host "Crear una unidad organizativa"
 	# Solicitar unidad organizativa sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa"
-	while ( "existOu $UO" -Match "$UO" ) {
+	existOu
+	while ( "$getOu" -Match "$UO" ) {
 		$UO = Read-Host "Unidad organizativa $UO ya existe, ingrese nuevo"
 	}
 	# Crear unidad organizativa
@@ -88,7 +82,8 @@ function delOu {
 	Clear-Host;Write-Host "Eliminar una unidad organizativa"
 	# Solicitar unidad organizativa sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$UO = Read-Host "Unidad organizativa: "
-	while ( "existOu $UO" -NotMatch "$UO" ) {
+	existOu
+	while ( "$getOu" -NotMatch "$UO" ) {
 		$GRUPO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo"
 	}
 	Remove-ADOrganizationalUnit "OU=$UO,$DC" -Recursive
