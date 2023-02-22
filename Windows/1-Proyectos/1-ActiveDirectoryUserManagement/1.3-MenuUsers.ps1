@@ -29,9 +29,26 @@ function modPasswd {
 		# Repetir hasta tener una clave valida
 		while ( $PASSWORD_OK -eq 0 ) {
 			# Solicitar clave hasta tener una valida
-			getModPasswd
 			# Verificar clave sabiendo que si no es valida, se vuelve a pedir
-			checkModPasswd $PASSWORD
+			# Solicitar clave al usuario (2 veces)
+			$PASSWORD1 = Read-Host "Contraseña"
+			$PASSWORD2 = Read-Host "Repetir contraseña"
+			# Si las claves son diferentes, se piden de nuevo
+			if ( "$PASSWORD1" -NotMatch "$PASSWORD2" ) {
+				PASSWORD=1
+			}
+			else {
+				# Verificar que la clave cumpla unas minimas condiciones 
+				# Copiar clave
+				PASSWORD=$PASSWORD1
+				# Se asume que la clave es valida
+				PASSWORD_OK=0
+				# Si la clave es igual a 1, estas son diferentes
+				if ( "$PASSWORD" -Match "1" ) {
+					Write-Host "[ERROR] - Las contraseñas son diferentes"
+					PASSWORD_OK=1
+				}	
+			}
 			# Si la clave es valida, se rompe el bucle
 			# if ( $PASSWORD_OK -eq 0 ) {
 				# break
@@ -55,32 +72,6 @@ function modPasswd {
 		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
 		Write-Host "Al no establecerla, el usuario debera cambiarla en el proximo intento de inicio de sesion."
 		Set-ADUser $USUARIO -ChangePasswordAtLogon $True
-	}
-}
-
-# Solicitar clave al usuario (2 veces)
-function getModPasswd {
-	$PASSWORD1 = Read-Host "Contraseña"
-	$PASSWORD2 = Read-Host "Repetir contraseña"
-	# Si las claves son diferentes, se piden de nuevo
-	if ( "$PASSWORD1" -NotMatch "$PASSWORD2" ) {
-		PASSWORD=1
-	}
-	else {
-		PASSWORD=$PASSWORD1
-	}
-}
-
-# Verificar que la clave cumpla unas minimas condiciones 
-function checkModPasswd {
-	# Copiar clave
-	PASSWORD=$PASSWORD
-	# Se asume que la clave es valida
-	PASSWORD_OK=0
-	# Si la clave es igual a 1, estas son diferentes
-	if ( "$PASSWORD" -Match "1" ) {
-		Write-Host "[ERROR] - Las contraseñas son diferentes"
-		PASSWORD_OK=1
 	}
 }
 
@@ -146,7 +137,7 @@ function getUser {
 			# Verifica si un usuario existe
 			$existUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
 			$ErrorActionPreference = "SilentlyContinue"
-			if ( " $existUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
+			if ( "$existUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
 				Write-Host "El usuario $USUARIO llamado $NOMBRE $APELLIDO no existe"
 			}
 			else {
@@ -201,17 +192,17 @@ function getAllUsers {
 # Obtener todos los usuarios de una unidad organizativa 
 function getAllUsersOu() {
 	Clear-Host;Write-Host "Obtener todos los usuarios de una unidad organizativa"
-	$OU = Read-Host "Unidad organizativa"
+	$UO= Read-Host "Unidad organizativa"
 	# Verifica si una unidad organizativa existe
 	$existOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
 	$ErrorActionPreference = "SilentlyContinue"
-	if ( "$existOu" -NotMatch "$OU" ) {
-		Write-Host "La unidad organizativa $OU no existe"
+	if ( "$existOu" -NotMatch "$UO" ) {
+		Write-Host "La unidad organizativa $UO no existe"
 	}
 	else {
 		Write-Host "Busqueda de datos los usuarios de la unidad organizativa ${OU}: "
 		# Obtenga todos los usuarios de una unidad organizativa especifica.
-		Get-ADUser -Filter * -SearchBase "OU=$OU,$DC" 
+		Get-ADUser -Filter * -SearchBase "OU=$UO,$DC" 
 		Start-Sleep -Seconds 3
 	}
 }
@@ -220,7 +211,7 @@ function getAllUsersOu() {
 function addUser {
 	Clear-Host;Write-Host "Crear un usuario"
 	# Solicitar usuario sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
-	$USUARIO = Read-Host "Usuario: "
+	$USUARIO = Read-Host "Usuario"
 	# Verifica si un usuario existe
 	$existUser = (Get-ADUser $USUARIO).SamAccountName
 	$ErrorActionPreference = "SilentlyContinue"
@@ -231,7 +222,7 @@ function addUser {
 	$NOMBRE = Read-Host "Nombre"
 	$APELLIDO = Read-Host "Apellido"
 	# Crear usuario
-	New-ADUser "$NOMBRE $APELLIDO" -Path "OU=$UO,$DC" -SamAccountName $USUARIO -GivenName "$NOMBRE" -SurName "$APELLIDO"
+	New-ADUser "$NOMBRE $APELLIDO" -Path "OU=usuarios,$DC" -SamAccountName $USUARIO -GivenName "$NOMBRE" -SurName "$APELLIDO"
 	# Asignar clave al usuario
 	modPasswd $USUARIO
 	# Activar la cuenta del usuario
@@ -247,8 +238,8 @@ function modUser {
 	# Verifica si un usuario existe
 	$existUser = (Get-ADUser $USUARIO).SamAccountName
 	$ErrorActionPreference = "SilentlyContinue"
-	while ( " $existUser" -NotMatch "$USUARIO" ) {
-		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo: "
+	while ( "$existUser" -NotMatch "$USUARIO" ) {
+		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo"
 	}
 	# Solicitar otros campos del usuario
 	Read-Host "Nombre" NOMBRE
@@ -272,7 +263,7 @@ function delUser {
 	# Verifica si un usuario existe
 	$existUser = (Get-ADUser $USUARIO).SamAccountName
 	$ErrorActionPreference = "SilentlyContinue"
-	while ( " $existUser" -NotMatch "$USUARIO" ) {
+	while ( "$existUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "El usuario $USUARIO no existe, ingrese uno nuevo"
 	}
 	Remove-ADUser $USUARIO
@@ -282,7 +273,7 @@ function delUser {
 function getAll {
 	Clear-Host;Write-Host "Obtener informacion del dominio..."
 	Write-Host "¿Cual de los siguientes opciones desea utilizar respecto al dominio $DOMAIN?"
-	$RESPUESTA = Read-Host "[scd] Su controlador de dominio [lcd] Lista controladores de dominio [ccd] Contar controladores de dominio: (por defecto es "d")" 
+	$RESPUESTA = Read-Host "[scd] Su controlador de dominio [lcd] Lista controladores de dominio [ccd] Contar controladores de dominio: (por defecto es "scd")" 
 	if ( "$RESPUESTA" -Match "scd" ) {
 		Write-Host "Ha seleccionado la opcion [scd]"
 		# Obtener el controlador de dominio al que pertenece su computadora
@@ -299,9 +290,9 @@ function getAll {
 		Get-ADDomainController -Filter * | Measure-Object
 	}
 	else {
-		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [g]"
+		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [scd]"
 		# Enumerar miembros de un grupo
-		Get-ADGroupMember "$GRUPO"
+		Get-ADDomainController -Discover
 	}
 }
 

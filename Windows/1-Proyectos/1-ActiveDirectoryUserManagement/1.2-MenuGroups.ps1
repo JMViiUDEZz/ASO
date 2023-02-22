@@ -21,7 +21,7 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 # Obtener un grupo, si existe
 function getGroup() {
 	Clear-Host;Write-Host "Obtener un grupo, si existe"
-	$GRUPO = Read-Host "Grupo: "
+	$GRUPO = Read-Host "Grupo"
 	# Verifica si un grupo existe
 	$existGroup = (Get-ADGroup $GRUPO).Name
 	$ErrorActionPreference = "SilentlyContinue"
@@ -64,7 +64,7 @@ function getAllGroups() {
 function addGroup() {
 	Clear-Host;Write-Host "Crear un grupo"
 	# Solicitar grupo sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
-	$GRUPO = Read-Host "Grupo: "
+	$GRUPO = Read-Host "Grupo"
 	# Verifica si un grupo existe
 	$existGroup = (Get-ADGroup $GRUPO).Name
 	$ErrorActionPreference = "SilentlyContinue"
@@ -99,7 +99,7 @@ function addGroup() {
 function delGroup() {
 	Clear-Host;Write-Host "Eliminar un grupo"
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
-	$GRUPO = Read-Host "Grupo: "
+	$GRUPO = Read-Host "Grupo"
 	# Verifica si un grupo existe
 	$existGroup = (Get-ADGroup $GRUPO).Name
 	$ErrorActionPreference = "SilentlyContinue"
@@ -114,7 +114,7 @@ function modGroup {
 	Clear-Host;Write-Host "Modificar un grupo"
 	# Modificar un grupo
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
-	$GRUPO = Read-Host "Grupo: "
+	$GRUPO = Read-Host "Grupo"
 	# Verifica si un grupo existe
 	$existGroup = (Get-ADGroup $GRUPO).Name
 	$ErrorActionPreference = "SilentlyContinue"

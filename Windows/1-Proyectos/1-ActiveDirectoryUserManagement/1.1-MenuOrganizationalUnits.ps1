@@ -84,7 +84,7 @@ function delOu {
 	$existOu = (Get-ADOrganizationalUnit "OU=$UO,$DC").Name
 	$ErrorActionPreference = "SilentlyContinue"
 	while ( "$existOu" -NotMatch "$UO" ) {
-		$GRUPO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo"
+		$UO = Read-Host "La unidad organizativa $UO no existe, ingrese uno nuevo"
 	}
 	Remove-ADOrganizationalUnit "OU=$UO,$DC" -Recursive
 }
