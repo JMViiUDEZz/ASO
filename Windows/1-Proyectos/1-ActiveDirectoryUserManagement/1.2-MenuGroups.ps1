@@ -19,22 +19,15 @@ $DEFEXPFILE="$DIRPS1\usersExported.ldf"
 # En este caso, las variables se han declarado en el propio script
 
 # Verifica si un grupo existe
-function existGroup {
-	$getGroup = (Get-ADGroup $GRUPO).Name
-	$ErrorActionPreference = "SilentlyContinue"
-}
 
 # Verifica si un usuario existe
-function existUser {
-	$getUser = (Get-ADUser $USUARIO).SamAccountName
-	$ErrorActionPreference = "SilentlyContinue"
-}
 
 # Obtener un grupo, si existe
 function getGroup() {
 	Clear-Host;Write-Host "Obtener un grupo, si existe"
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
+	$getGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
 	if ( "$getGroup" -NotMatch "$GRUPO" ) {
 		Write-Host "El grupo $GRUPO no existe"
 	}
@@ -75,7 +68,8 @@ function addGroup() {
 	Clear-Host;Write-Host "Crear un grupo"
 	# Solicitar grupo sabiendo que si existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
+	$getGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
 	while ( "$getGroup" -Match "$GRUPO" ) {
 		$GRUPO = Read-Host "Grupo $GRUPO ya existe, ingrese nuevo"
 	}
@@ -108,7 +102,8 @@ function delGroup() {
 	Clear-Host;Write-Host "Eliminar un grupo"
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
+	$getGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
 	while ( "$getGroup" -NotMatch "$GRUPO" ) {
 		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
@@ -121,13 +116,15 @@ function modGroup {
 	# Modificar un grupo
 	# Solicitar grupo sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$GRUPO = Read-Host "Grupo: "
-	existGroup
+	$getGroup = (Get-ADGroup $GRUPO).Name
+	$ErrorActionPreference = "SilentlyContinue"
 	while ( "$getGroup" -NotMatch "$GRUPO" ) {
 		$GRUPO = Read-Host "El grupo $GRUPO no existe, ingrese uno nuevo"
 	}
 	# Solicitar usuario sabiendo que si no existe, se pide otro. Por ello, este no se puede enviar por parametro ($1)
 	$USUARIO = Read-Host "Usuario: "
-	existUser
+	$getUser = (Get-ADUser $USUARIO).SamAccountName
+	$ErrorActionPreference = "SilentlyContinue"
 	while ( "$getUser" -NotMatch "$USUARIO" ) {
 		$USUARIO = Read-Host "Usuario $USUARIO ya existe, ingrese nuevo"
 	}		
