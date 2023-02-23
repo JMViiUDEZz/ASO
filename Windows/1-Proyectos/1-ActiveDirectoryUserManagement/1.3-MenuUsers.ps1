@@ -13,9 +13,8 @@ $PASSWORD="jose2019+"
 $DATE=Get-Date -Format "MM/dd/yyyy"
 $TIME=Get-Date -Format "HH:mm"
 $DATE_TIME=Get-Date -Format "MM/dd/yyyy_HH:mm"
-$DEFDIR="C:\1-ActiveDirectoryUserManagement"
-$DEFIMPFILE="$DIRPS1\usersImported.ldf"
-$DEFEXPFILE="$DIRPS1\usersExported.ldf"
+$DEFIMPFILE="$C:\usersImported.ldf"
+$DEFEXPFILE="$C:\usersExported.ldf"
 # En este caso, las variables se han declarado en el propio script
 
 # Asignar clave a un usuario
@@ -135,9 +134,9 @@ function getUser {
 			$NOMBRE = Read-Host "Nombre"
 			$APELLIDO = Read-Host "Apellido"
 			# Verifica si un usuario existe
-			$existUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).Name
+			$existUserName = (Get-ADUser -Filter { Name -like "*$NOMBRE $APELLIDO*"}).SamAccountName
 			$ErrorActionPreference = "SilentlyContinue"
-			if ( "$existUserName" -NotLike "*$NOMBRE $APELLIDO*" ) {
+			if ( "$existUserName" -NotMatch "$USUARIO" ) {
 				Write-Host "El usuario $USUARIO llamado $NOMBRE $APELLIDO no existe"
 			}
 			else {
@@ -224,9 +223,9 @@ function addUser {
 	# Crear usuario
 	New-ADUser "$NOMBRE $APELLIDO" -Path "OU=usuarios,$DC" -SamAccountName $USUARIO -GivenName "$NOMBRE" -SurName "$APELLIDO"
 	# Asignar clave al usuario
-	modPasswd $USUARIO
+	# modPasswd $USUARIO
 	# Activar la cuenta del usuario
-	enDisUser $USUARIO
+	# enDisUser $USUARIO
 }
 
 # Modificar un usuario
@@ -247,12 +246,106 @@ function modUser {
 	# Modificar usuario
 	Set-ADUser $USUARIO -GivenName "$NOMBRE" -SurName "$APELLIDO"
 	# Asignar clave al usuario
-	modPasswd $USUARIO
+	# modPasswd $USUARIO
 	# Activar o desactivar la cuenta del usuario
-	enDisUser $USUARIO
+	# enDisUser $USUARIO
 	# Desbloquear la cuenta del usuario
-	unUser $USUARIO
+	# unUser $USUARIO
 
+	# Asignar clave a un usuario
+	Clear-Host;Write-Host "Cambiar clave a un usuario..."
+	# Solicitar confirmacion para cambiar la clave del usuario que se muestra
+	Write-Host "¿Desea establecer una contraseña al usuario $USUARIO?"
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")" 
+	if ( "$RESPUESTA" -Match "y" ) {
+		Write-Host "Ha seleccionado la opcion [y]"
+		# Repetir hasta tener una clave valida
+		while ( $PASSWORD_OK -eq 0 ) {
+			# Solicitar clave hasta tener una valida
+			# Verificar clave sabiendo que si no es valida, se vuelve a pedir
+			# Solicitar clave al usuario (2 veces)
+			$PASSWORD1 = Read-Host "Contraseña"
+			$PASSWORD2 = Read-Host "Repetir contraseña"
+			# Si las claves son diferentes, se piden de nuevo
+			if ( "$PASSWORD1" -NotMatch "$PASSWORD2" ) {
+				PASSWORD=1
+			}
+			else {
+				# Verificar que la clave cumpla unas minimas condiciones 
+				# Copiar clave
+				PASSWORD=$PASSWORD1
+				# Se asume que la clave es valida
+				PASSWORD_OK=0
+				# Si la clave es igual a 1, estas son diferentes
+				if ( "$PASSWORD" -Match "1" ) {
+					Write-Host "[ERROR] - Las contraseñas son diferentes"
+					PASSWORD_OK=1
+				}	
+			}
+			# Si la clave es valida, se rompe el bucle
+			# if ( $PASSWORD_OK -eq 0 ) {
+				# break
+			# }
+			# Verificar salida comando
+			$ErrorActionPreference = "SilentlyContinue"
+			$checkModPasswd = Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
+			if ( $? -eq $False ) {
+				Write-Host "[ERROR] - La clave no cumple lo minimo requerido"
+				PASSWORD_OK=1
+			}
+		}
+		Set-ADAccountPassword $USUARIO -NewPassword (ConvertTo-SecureString -AsPlainText "$PASSWORD" -force)
+	}
+	elseif ( "$RESPUESTA" -Match "n" ) {
+		Write-Host "Ha seleccionado la opcion [n]"
+		Write-Host "Al no establecerla, el usuario debera cambiarla en el proximo intento de inicio de sesion."
+		Set-ADUser $USUARIO -ChangePasswordAtLogon $True
+	}
+	else {
+		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
+		Write-Host "Al no establecerla, el usuario debera cambiarla en el proximo intento de inicio de sesion."
+		Set-ADUser $USUARIO -ChangePasswordAtLogon $True
+	}
+
+	# Activar la cuenta del usuario
+	Write-Host "Lista de cuentas de usuario deshabilitadas"
+	# Obtenga la lista de cuentas de usuario deshabilitadas.
+	Search-ADAccount -AccountDisabled | select Name, SamAccountName
+	Write-Host "¿Desea activar la cuenta del usuario $USUARIO?"
+	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
+	if ( "$RESPUESTA" -Match "y" ) {
+		Write-Host "Ha seleccionado la opcion [y]"
+		Write-Host "Activando la cuenta del usuario $USUARIO"
+		Enable-ADAccount $USUARIO
+	}
+	elseif ( "$RESPUESTA" -Match "n" ) {
+		Write-Host "Ha seleccionado la opcion [n]"
+		Write-Host "Desactivando la cuenta del usuario $USUARIO"
+		Disable-ADAccount $USUARIO
+	}
+	else {
+		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
+		Write-Host "Desactivando la cuenta del usuario $USUARIO"
+		Disable-ADAccount $USUARIO
+	}
+
+	# Desbloquear la cuenta del usuario (Bloqueado por introducir una contraseña erronea reiteradamente)
+	Write-Host "Lista de cuentas de usuario bloqueadas: "
+	# Obtenga la lista de cuentas de usuario bloqueadas.
+	Search-ADAccount -LockedOut | select Name, SamAccountName
+	Write-Host "¿Desea Desbloquear la cuenta del usuario $USUARIO?"
+	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
+	if ( "$RESPUESTA" -Match "y" ) {
+		Write-Host "Ha seleccionado la opcion [y]"
+		Write-Host "Desbloqueando la cuenta del usuario $USUARIO"
+		Unlock-ADAccount $USUARIO
+	}
+	elseif ( "$RESPUESTA" -Match "n" ) {
+		Write-Host "Ha seleccionado la opcion [n]"
+	}
+	else {
+		Write-Host "Como el caracter introducido es diferente a los especificados previamente, se tratara como [n]"
+	}
 }
 
 # Eliminar un usuario
