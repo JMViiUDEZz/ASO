@@ -418,11 +418,15 @@ function exUsers {
 	if ( $EXPFILE -Match "" ) {
 		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion"
 		# Exportar usuarios
+		$ErrorActionPreference = "SilentlyContinue"
+		Remove-Item $DEFEXPFILE
 		Ldifde -r "objectClass=User" -f $DEFEXPFILE
 	}
 	else {
 		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion"
 		# Exportar usuarios
+		$ErrorActionPreference = "SilentlyContinue"
+		Remove-Item $EXPFILE
 		Ldifde -r "objectClass=User" -f $EXPFILE
 	}
 }
