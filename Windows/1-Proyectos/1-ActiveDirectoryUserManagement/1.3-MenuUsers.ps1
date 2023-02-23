@@ -13,8 +13,8 @@ $PASSWORD="jose2019+"
 $DATE=Get-Date -Format "MM/dd/yyyy"
 $TIME=Get-Date -Format "HH:mm"
 $DATE_TIME=Get-Date -Format "MM/dd/yyyy_HH:mm"
-$DEFIMPFILE="$C:\usersImported.ldf"
-$DEFEXPFILE="$C:\usersExported.ldf"
+$DEFIMPFILE="C:\usersImported.ldf"
+$DEFEXPFILE="C:\usersExported.ldf"
 # En este caso, las variables se han declarado en el propio script
 
 # Asignar clave a un usuario
@@ -395,13 +395,8 @@ function imUsers {
 	# Introducir un archivo de importacion
 	$IMPFILE = Read-Host "Introduce la ruta del archivo de importacion" 
 	# Comprobar que el archivo de importacion introducido existe
-	$EXISTFILE = Test-Path $IMPFILE	
-	if ( $EXISTFILE -eq $True ) {
-		Write-Host "El archivo de importacion existe..."
-		# Importar usuarios
-		Ldifde -i -f $IMPFILE
-	}
-	elseif ( ( $EXISTFILE -eq $False ) -and ( $IMPFILE -Match "" ) ) {
+	# $EXISTFILE = Test-Path $IMPFILE	
+	if ( $IMPFILE -Match "" ) {
 		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion..."
 		# Importar usuarios
 		Ldifde -i -f $DEFIMPFILE
@@ -409,7 +404,7 @@ function imUsers {
 	else {
 		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion..."
 		# Importar usuarios
-		Ldifde -i -f $DEFIMPFILE
+		Ldifde -i -f $IMPFILE
 	}
 }
 
@@ -419,19 +414,8 @@ function exUsers {
 	# Introducir un archivo de exportacion
 	$EXPFILE = Read-Host "Introduce la ruta del archivo de exportacion: " 
 	# Comprobar que el archivo de exportacion introducido no existe
-	$EXISTFILE = Test-Path $EXPFILE	
-	if ( $EXISTFILE -eq $True ) {
-		Write-Host "El archivo de exportacion ya existe, por lo que se eliminara para poder reemplazarlo..."
-		Remove-Item $EXPFILE	
-		# Exportar usuarios
-		Ldifde -r "objectClass=User" -f $EXPFILE
-	}
-	elseif ( $EXISTFILE -eq $False ) {
-		Write-Host "El archivo de exportacion no existe..."
-		# Exportar usuarios
-		Ldifde -r "objectClass=User" -f $EXPFILE
-	}
-	elseif ( ( $EXISTFILE -eq $False ) -and ( $EXPFILE -Match "" ) ) {
+	# $EXISTFILE = Test-Path $EXPFILE	
+	if ( $EXPFILE -Match "" ) {
 		Write-Host "Al no introducirlo, se utilizara la ruta por defecto especificada en el archivo de configuracion"
 		# Exportar usuarios
 		Ldifde -r "objectClass=User" -f $DEFEXPFILE
@@ -439,7 +423,7 @@ function exUsers {
 	else {
 		Write-Host "El archivo de importacion no existe, por lo que se utilizara la ruta por defecto especificada en el archivo de configuracion"
 		# Exportar usuarios
-		Ldifde -r "objectClass=User" -f $DEFEXPFILE
+		Ldifde -r "objectClass=User" -f $EXPFILE
 	}
 }
 
