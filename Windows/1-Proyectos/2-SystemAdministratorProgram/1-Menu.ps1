@@ -27,9 +27,9 @@ while($OPCION -ne 4)
 	# Comprobar que ha introducido el usuario
     switch($OPCION)
     {
-        1{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\ASO\1-Windows\1-Proyectos\2-SystemAdministratorProgram\1.1-ResourcesMonitoring.ps1}
-        2{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\ASO\1-Windows\1-Proyectos\2-SystemAdministratorProgram\1.2-MakeUserBackups.ps1}
-        3{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\ASO\1-Windows\1-Proyectos\2-SystemAdministratorProgram\1.3-RecoverUserBackups.ps1}
+        1{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\ASO\Windows\1-Proyectos\2-SystemAdministratorProgram\1.1-ResourcesMonitoring.ps1}
+        2{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\ASO\Windows\1-Proyectos\2-SystemAdministratorProgram\1.2-MakeUserBackups.ps1}
+        3{Invoke-Command -ComputerName w-server -Credential ASIR\Administrador -FilePath C:\ASO\Windows\1-Proyectos\2-SystemAdministratorProgram\1.3-RecoverUserBackups.ps1}
 		4{exit}
     }
 	# Volvemos a ejecutar la funcion para que muestre las opciones del menu
