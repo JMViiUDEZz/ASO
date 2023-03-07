@@ -11,7 +11,7 @@ Clear-Host
 # $backupPath = "C:\UserBackups"
 # $restorePath = "C:\UserRestores"
 
-# Función para hacer una copia de seguridad de un usuario
+# Funcion para hacer una copia de seguridad de un usuario
 function Backup-Users {
     # param (
         # [Parameter(Mandatory = $true)]
@@ -39,14 +39,14 @@ function Backup-Users {
 	foreach ($user in $users) {
 		# Comprobamos que el usuario exista en el sistema
 		if (-not (Get-ADUser -Filter {SamAccountName -eq $user})) {
-			Write-Host "El usuario '$user' no existe en el sistema. No se realizará la copia de seguridad."
+			Write-Host "El usuario '$user' no existe en el sistema. No se realizara la copia de seguridad."
 			continue
 		}
 		
 		# Comprobamos que el usuario tenga un directorio de inicio
 		$userFolder = (Get-ADUser -Identity $user -Properties Homedirectory).Homedirectory
 		if (-not $userFolder) {
-			Write-Host "El usuario '$user' no tiene un directorio de inicio. No se realizará la copia de seguridad."
+			Write-Host "El usuario '$user' no tiene un directorio de inicio. No se realizara la copia de seguridad."
 			continue
 		}
 		
@@ -54,7 +54,7 @@ function Backup-Users {
 		try {
 			$acl = Get-Acl $userFolder
 		} catch {
-			Write-Host "No se tienen permisos para acceder al directorio de inicio del usuario '$user'. No se realizará la copia de seguridad."
+			Write-Host "No se tienen permisos para acceder al directorio de inicio del usuario '$user'. No se realizara la copia de seguridad."
 			continue
 		}
 		
@@ -69,9 +69,9 @@ function Backup-Users {
 		$backupFile = Join-Path $backupPath "backup-$user-$backupDate.zip"
 		Compress-Archive -Path $userFolder\* -DestinationPath $backupFile -Force
 		
-		# Comprobar que la copia de seguridad se realizó correctamente
+		# Comprobar que la copia de seguridad se realizo correctamente
 		if (Test-Path $backupFile) {
-			Write-Host "La copia de seguridad de $user se realizó correctamente."
+			Write-Host "La copia de seguridad de $user se realizo correctamente."
 			Write-Host "Se ha realizado una copia de seguridad de los archivos del usuario '$user' en el archivo '$backupFile'."
 		}
 		else {

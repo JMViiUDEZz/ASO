@@ -11,7 +11,7 @@ Clear-Host
 # $backupPath = "C:\UserBackups"
 # $restorePath = "C:\UserRestores"
 
-# Función para restaurar todas las copias de seguridad de usuarios
+# Funcion para restaurar todas las copias de seguridad de usuarios
 Function Restore-AllUsers {
 	# Pedimos al usuario que introduzca los nombres de los usuarios separados por espacio
 	$users = Read-Host "Introduce los nombres de los usuarios separados por espacio"
@@ -23,14 +23,14 @@ Function Restore-AllUsers {
 	foreach ($user in $users) {
 		# Comprobamos que el usuario exista en el sistema
 		if (-not (Get-ADUser -Filter {SamAccountName -eq $user})) {
-			Write-Host "El usuario '$user' no existe en el sistema. No se recuperará la copia de seguridad."
+			Write-Host "El usuario '$user' no existe en el sistema. No se recuperara la copia de seguridad."
 			continue
 		}
 		
 		# Comprobamos que el usuario tenga un directorio de inicio
 		$userFolder = (Get-ADUser -Identity $user -Properties Homedirectory).Homedirectory
 		if (-not $userFolder) {
-			Write-Host "El usuario '$user' no tiene un directorio de inicio. No se recuperará la copia de seguridad."
+			Write-Host "El usuario '$user' no tiene un directorio de inicio. No se recuperara la copia de seguridad."
 			continue
 		}
 		
@@ -38,21 +38,21 @@ Function Restore-AllUsers {
 		try {
 			$acl = Get-Acl $userFolder
 		} catch {
-			Write-Host "No se tienen permisos para acceder al directorio de inicio del usuario '$user'. No se recuperará la copia de seguridad."
+			Write-Host "No se tienen permisos para acceder al directorio de inicio del usuario '$user'. No se recuperara la copia de seguridad."
 			continue
 		}
 		
 		# Comprobamos que el directorio de backup exista
 		$backupPath = Join-Path $userFolder "backup"
 		if (-not (Test-Path $backupPath)) {
-			Write-Host "No se ha encontrado el directorio de backup del usuario '$user'. No se recuperará la copia de seguridad."
+			Write-Host "No se ha encontrado el directorio de backup del usuario '$user'. No se recuperara la copia de seguridad."
 			continue
 		}
 		
-		# Buscamos el archivo de backup más reciente
+		# Buscamos el archivo de backup mas reciente
 		$backupFile = Get-ChildItem $backupPath -Filter "backup-$user-*.zip" | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1
 		if (-not $backupFile) {
-			Write-Host "No se ha encontrado ningún archivo de backup para el usuario '$user'. No se recuperará la copia de seguridad."
+			Write-Host "No se ha encontrado ningun archivo de backup para el usuario '$user'. No se recuperara la copia de seguridad."
 			continue
 		}
 		

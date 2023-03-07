@@ -8,7 +8,7 @@
 # Limpiar la pantalla al lanzar el menu
 Clear-Host
 
-# Establecer la ruta de la carpeta donde se guardarán los archivos de registro
+# Establecer la ruta de la carpeta donde se guardaran los archivos de registro
 $logFolder = "C:\Logs"
 
 # Obtener la fecha y hora actual para el nombre del archivo de registro
@@ -25,32 +25,28 @@ Function Get-SumSysRes {
 	$memory = Get-Counter '\Memory\Available MBytes'
 	$disk = Get-Counter '\LogicalDisk(_Total)\% Free Space'
 
-	# Formatear la información
+	# Formatear la informacion
 	$cpuUsage = "{0:N2}" -f ($cpu.CounterSamples[0].CookedValue / $cpu.CounterSamples[0].BaseValue * 100)
 	$memoryAvailable = "{0:N2}" -f $memory.CounterSamples[0].CookedValue
 	$diskFreeSpace = "{0:N2}" -f $disk.CounterSamples[0].CookedValue
 		
-	$Result-SumSysRes = (
+	$ResultSumSysRes = (
 		# Mostrar resumen del monitoreo de recursos 
-		Write-Host "Inicio del monitoreo de recursos del día $Date a las $Time:"
-		Write-Host ""
-		Write-Host "Resumen:"
-		Write-Host ""
-		Write-Host "CPU Usage: $cpuUsage"
-		Write-Host "Memory Available: $memoryAvailable"
-		Write-Host "Memory Free Space: $diskFreeSpace"
-		Write-Host ""
-	) | Out-String
+		Write-Host "`nInicio del monitoreo de recursos del dia $Date a las $Time`n:
+		`nResumen`n:
+		CPU Usage: $cpuUsage
+		Memory Available: $memoryAvailable
+		Memory Free Space: $diskFreeSpace"
 
 }
 
-# Función para obtener el uso de la CPU
+# Funcion para obtener el uso de la CPU
 Function Get-CpuUsage {
     $cpu = Get-WmiObject -Class Win32_Processor
     $prevIdleTime = $prevKernelTime = $prevUserTime = 0
     $idleTime = $kernelTime = $userTime = $totalTime = 0
     
-    # Obtener la información de la CPU
+    # Obtener la informacion de la CPU
     foreach ($proc in $cpu) {
         $idleTime += $proc.GetPropertyValue("IdleTime").toUInt64()
         $kernelTime += $proc.GetPropertyValue("KernelModeTime").toUInt64()
@@ -71,26 +67,20 @@ Function Get-CpuUsage {
     # Retornar el porcentaje de uso de la CPU
     # return $cpuUsage
 	
-	$Result-CpuUsage = (
-		Write-Host "CPU Usage: $cpuUsage`%"
-		Write-Host ""
-	) | Out-String
+	$ResultCpuUsage = Write-Host "`nCPU Usage: $cpuUsage`%"
 }
 
-# Función para obtener el uso de la memoria
+# Funcion para obtener el uso de la memoria
 Function Get-MemoryUsage {
     $memoryUsage = Get-Counter "\Memory\Available MBytes"
     
     # Retornar el valor de memoria disponible
     # return $memoryUsage.CounterSamples[0].CookedValue
 	
-	$Result-MemoryUsage = (
-		Write-Host "Memory Usage: $memoryUsage.CounterSamples[0].CookedValue`MB"
-		Write-Host ""
-	) | Out-String
+	$ResultMemoryUsage = Write-Host "`nMemory Usage: $memoryUsage.CounterSamples[0].CookedValue`MB"
 }
 
-# Función para obtener el uso del disco
+# Funcion para obtener el uso del disco
 Function Get-DiskUsage {
     $disks = Get-WmiObject -Class Win32_LogicalDisk -Filter "DriveType=3"
     $diskUsage = @()
@@ -113,68 +103,52 @@ Function Get-DiskUsage {
     # Retornar el uso de los discos
     # return $diskUsage
 	
-	$Result-DiskUsage = (
-		Write-Host "Disk Usage:"
-		$diskUsage | Format-Table -AutoSize
-		Write-Host ""
-	) | Out-String
+	$ResultDiskUsage = Write-Host "`nDisk Usage:
+		$diskUsage | Format-Table -AutoSize"
 }
 
 Function Get-SysInfo {
-	# Obtener información del sistema
+	# Obtener informacion del sistema
 	$systemInfo = Get-WmiObject -Class Win32_ComputerSystem
 	$osInfo = Get-WmiObject -Class Win32_OperatingSystem
 	$processorInfo = Get-WmiObject -Class Win32_Processor
 	$memoryInfo = Get-WmiObject -Class Win32_PhysicalMemory
 	$diskInfo = Get-WmiObject -Class Win32_LogicalDisk
 	
-	# Mostrar información del sistema
-	$Result-SysInfo = (
-		Write-Host "Información del sistema:"
-		Write-Host ""
-		Write-Host "Nombre de la computadora: $($systemInfo.Name)"
-		Write-Host "Fabricante del sistema: $($systemInfo.Manufacturer)"
-		Write-Host "Modelo del sistema: $($systemInfo.Model)"
-		Write-Host "Sistema operativo: $($osInfo.Caption) $($osInfo.Version)"
-		Write-Host "Procesador: $($processorInfo.Name)"
-		Write-Host "Memoria física total: $([math]::Round($memoryInfo.Capacity / 1GB, 2)) GB"
-		Write-Host ""
-	) | Out-String
-
+	# Mostrar informacion del sistema
+	$ResultSysInfo = Write-Host "`nInformacion del sistema:`n
+		Nombre de la computadora: $($systemInfo.Name)
+		Fabricante del sistema: $($systemInfo.Manufacturer)
+		Modelo del sistema: $($systemInfo.Model)
+		Sistema operativo: $($osInfo.Caption) $($osInfo.Version)
+		Procesador: $($processorInfo.Name)
+		Memoria fisica total: $([math]::Round($memoryInfo.Capacity / 1GB, 2)) GB"
 }
 
 Function Get-NetInfo {
-	# Mostrar información de red
+	# Mostrar informacion de red
 	$networkAdapterInfo = Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IPAddress -ne $null }
 	$networkAdapterSpeed = Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionStatus -eq 2 } | Select-Object -ExpandProperty Speed
 	
-	$Result-NetInfo = (
-		Write-Host "Información de red:"
-		Write-Host ""
-		Write-Host "Velocidad de la conexión: $([math]::Round($networkAdapterSpeed / 1MB, 2)) MB/s"
-		Write-Host "Dirección IP: $($networkAdapterInfo.IPAddress[0])"
-		Write-Host "Máscara de subred: $($networkAdapterInfo.IPSubnet[0])"
-		Write-Host "Puerta de enlace predeterminada: $($networkAdapterInfo.DefaultIPGateway[0])"
-		Write-Host ""	
-	) | Out-String
+	$ResultNetInfo = Write-Host "`nInformacion de red:`n
+		Velocidad de la conexion: $([math]::Round($networkAdapterSpeed / 1MB, 2)) MB/s
+		Direccion IP: $($networkAdapterInfo.IPAddress[0])
+		Mascara de subred: $($networkAdapterInfo.IPSubnet[0])
+		Puerta de enlace predeterminada: $($networkAdapterInfo.DefaultIPGateway[0])"
 }
 
 Function Get-MemInfo {
-	# Mostrar información de memoria
+	# Mostrar informacion de memoria
 	$memoryUsage = Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty FreePhysicalMemory
 	$totalMemory = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty TotalPhysicalMemory
 	$memoryUsagePercentage = [math]::Round(($totalMemory - $memoryUsage) / $totalMemory * 100, 2)
 	
-	$Result-MemInfo = (
-		Write-Host "Información de memoria:"
-		Write-Host ""
-		Write-Host "Memoria física en uso: $([math]::Round($memoryUsage / 1GB, 2)) GB"
-		Write-Host "Porcentaje de uso de la memoria física: $memoryUsagePercentage%"
-		Write-Host ""
-	) | Out-String
+	$ResultMemInfo = Write-Host "`nInformacion de memoria:`n
+		Memoria fisica en uso: $([math]::Round($memoryUsage / 1GB, 2)) GB
+		Porcentaje de uso de la memoria fisica: $memoryUsagePercentage%"
 }
 
-# Función para obtener la información del disco
+# Funcion para obtener la informacion del disco
 Function Get-DiskInfo {
     $diskInfo = Get-WmiObject -Class Win32_LogicalDisk
     foreach ($disk in $diskInfo) {
@@ -183,40 +157,35 @@ Function Get-DiskInfo {
             $usedSpace = [math]::Round(($disk.Size - $disk.FreeSpace) / 1GB, 2)
     }
 	
-	# Mostrar información del disco
-	$Result-DiskInfo = (
-		Write-Host "Información del disco:"
-		Write-Host ""
-		Write-Host "Tamaño: $diskSize GB"
-		Write-Host "Espacio libre: $freeSpace GB"
-		Write-Host "Espacio usado: $usedSpace GB"
-		Write-Host ""
-		Write-Host "Fin del monitoreo de recursos, puedes consultarlo en $logPath..."
-		Write-Host ""
-	) | Out-String
+	# Mostrar informacion del disco
+	$ResultDiskInfo = Write-Host "`nInformacion del disco:`n
+	Tamaño: $diskSize GB
+	Espacio libre: $freeSpace GB
+	Espacio usado: $usedSpace GB
+	`nFin del monitoreo de recursos, puedes consultarlo en $logPath...`n"
 }
 
-# Función para mostrar la información
+# Funcion para mostrar la informacion
 Function Show-Info {
-	Write-Host $Result-SumSysRes
-	Write-Host $Result-CpuUsage
-	Write-Host $Result-DiskUsage
-	Write-Host $Result-SysInfo
-	Write-Host $Result-NetInfo
-	Write-Host $Result-MemInfo
-	Write-Host $Result-DiskInfo
+	Write-Host $ResultSumSysRes
+	Write-Host $ResultCpuUsage
+	Write-Host $ResultDiskUsage
+	Write-Host $ResultSysInfo
+	Write-Host $ResultNetInfo
+	Write-Host $ResultMemInfo
+	Write-Host $ResultDiskInfo
 }
 
-# Función para escribir en el archivo de registro
+# Funcion para escribir en el archivo de registro
 Function Write-LogFile {
 	# Out-File -FilePath "C:\ruta\al\archivo.txt" -InputObject $resultado
-    Add-Content $logPath $Result-SumSysRes
-	Add-Content $logPath $Result-CpuUsage
-    Add-Content $logPath $Result-DiskUsage
-    Add-Content $logPath $Result-SysInfo
-    Add-Content $logPath $Result-NetInfo
-	Add-Content $logPath $Result-MemInfo
-    Add-Content $logPath $Result-DiskInfo
+    Add-Content $logPath $ResultSumSysRes
+	Add-Content $logPath $ResultCpuUsage
+    Add-Content $logPath $ResultDiskUsage
+    Add-Content $logPath $ResultSysInfo
+    Add-Content $logPath $ResultNetInfo
+	Add-Content $logPath $ResultMemInfo
+    Add-Content $logPath $ResultDiskInfo
 }
 
 # Crear la carpeta si no existe
