@@ -30,7 +30,7 @@ Function Get-SumSysRes {
 	$memoryAvailable = "{0:N2}" -f $memory.CounterSamples[0].CookedValue
 	$diskFreeSpace = "{0:N2}" -f $disk.CounterSamples[0].CookedValue
 		
-	$ResultSumSysRes = (
+	$ResultSumSysRes =
 		# Mostrar resumen del monitoreo de recursos 
 		Write-Host "`nInicio del monitoreo de recursos del dia $Date a las $Time`n:
 		`nResumen`n:
