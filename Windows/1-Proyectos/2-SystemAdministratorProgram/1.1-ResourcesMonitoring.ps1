@@ -42,11 +42,12 @@ Function Get-NetInfo {
 	$networkAdapterInfo = Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IPAddress -ne $null }
 	$networkAdapterSpeed = Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionStatus -eq 2 } | Select-Object -ExpandProperty Speed
 	
+	# Velocidad de la conexion: $([math]::Round($networkAdapterSpeed / 1MB, 2)) MB/s
 	$ResultNetInfo = Write-Host "`nInformacion de red:`n
-		Velocidad de la conexion: $([math]::Round($networkAdapterSpeed / 1MB, 2)) MB/s
 		Direccion IP: $($networkAdapterInfo.IPAddress[0])
 		Mascara de subred: $($networkAdapterInfo.IPSubnet[0])
 		Puerta de enlace predeterminada: $($networkAdapterInfo.DefaultIPGateway[0])"
+
 }
 
 Function Get-MemInfo {
