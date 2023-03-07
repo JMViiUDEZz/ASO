@@ -19,94 +19,6 @@ $Time = Get-Date -Format "HH:mm:ss"
 # Establecer la ruta del archivo de registro
 $logPath = "$logFolder\SystemResources_$logDate.log"
 
-# Obtener resumen del monitoreo de recursos 
-Function Get-SumSysRes {
-	$cpu = Get-Counter '\Processor(_Total)\% Processor Time'
-	$memory = Get-Counter '\Memory\Available MBytes'
-	$disk = Get-Counter '\LogicalDisk(_Total)\% Free Space'
-
-	# Formatear la informacion
-	$cpuUsage = "{0:N2}" -f ($cpu.CounterSamples[0].CookedValue / $cpu.CounterSamples[0].BaseValue * 100)
-	$memoryAvailable = "{0:N2}" -f $memory.CounterSamples[0].CookedValue
-	$diskFreeSpace = "{0:N2}" -f $disk.CounterSamples[0].CookedValue
-		
-	$ResultSumSysRes =
-		# Mostrar resumen del monitoreo de recursos 
-		Write-Host "`nInicio del monitoreo de recursos del dia $Date a las $Time`n:
-		`nResumen`n:
-		CPU Usage: $cpuUsage
-		Memory Available: $memoryAvailable
-		Memory Free Space: $diskFreeSpace"
-
-}
-
-# Funcion para obtener el uso de la CPU
-Function Get-CpuUsage {
-    $cpu = Get-WmiObject -Class Win32_Processor
-    $prevIdleTime = $prevKernelTime = $prevUserTime = 0
-    $idleTime = $kernelTime = $userTime = $totalTime = 0
-    
-    # Obtener la informacion de la CPU
-    foreach ($proc in $cpu) {
-        $idleTime += $proc.GetPropertyValue("IdleTime").toUInt64()
-        $kernelTime += $proc.GetPropertyValue("KernelModeTime").toUInt64()
-        $userTime += $proc.GetPropertyValue("UserModeTime").toUInt64()
-    }
-    
-    # Calcular el tiempo total de la CPU
-    $totalTime = $kernelTime + $userTime
-    $idleTime = $totalTime - $idleTime
-    
-    # Calcular el porcentaje de uso de la CPU
-    $cpuUsage = (($totalTime - $prevTotalTime) - ($idleTime - $prevIdleTime)) / ($totalTime - $prevTotalTime) * 100
-    
-    # Almacenar los valores previos
-    $prevTotalTime = $totalTime
-    $prevIdleTime = $idleTime
-    
-    # Retornar el porcentaje de uso de la CPU
-    # return $cpuUsage
-	
-	$ResultCpuUsage = Write-Host "`nCPU Usage: $cpuUsage`%"
-}
-
-# Funcion para obtener el uso de la memoria
-Function Get-MemoryUsage {
-    $memoryUsage = Get-Counter "\Memory\Available MBytes"
-    
-    # Retornar el valor de memoria disponible
-    # return $memoryUsage.CounterSamples[0].CookedValue
-	
-	$ResultMemoryUsage = Write-Host "`nMemory Usage: $memoryUsage.CounterSamples[0].CookedValue`MB"
-}
-
-# Funcion para obtener el uso del disco
-Function Get-DiskUsage {
-    $disks = Get-WmiObject -Class Win32_LogicalDisk -Filter "DriveType=3"
-    $diskUsage = @()
-    
-    # Obtener el uso de cada disco
-    foreach ($disk in $disks) {
-        $freeSpace = [Math]::Round($disk.FreeSpace / 1GB, 2)
-        $totalSpace = [Math]::Round($disk.Size / 1GB, 2)
-        $usedSpace = $totalSpace - $freeSpace
-        $percentUsed = [Math]::Round($usedSpace / $totalSpace * 100, 2)
-        $diskUsage += @{
-            "DriveLetter" = $disk.DeviceID
-            "TotalSpace" = $totalSpace
-            "FreeSpace" = $freeSpace
-            "UsedSpace" = $usedSpace
-            "PercentUsed" = $percentUsed
-        }
-    }
-    
-    # Retornar el uso de los discos
-    # return $diskUsage
-	
-	$ResultDiskUsage = Write-Host "`nDisk Usage:
-		$diskUsage | Format-Table -AutoSize"
-}
-
 Function Get-SysInfo {
 	# Obtener informacion del sistema
 	$systemInfo = Get-WmiObject -Class Win32_ComputerSystem
@@ -159,7 +71,7 @@ Function Get-DiskInfo {
 	
 	# Mostrar informacion del disco
 	$ResultDiskInfo = Write-Host "`nInformacion del disco:`n
-	Tamaño: $diskSize GB
+	Tamano: $diskSize GB
 	Espacio libre: $freeSpace GB
 	Espacio usado: $usedSpace GB
 	`nFin del monitoreo de recursos, puedes consultarlo en $logPath...`n"
@@ -167,9 +79,6 @@ Function Get-DiskInfo {
 
 # Funcion para mostrar la informacion
 Function Show-Info {
-	Write-Host $ResultSumSysRes
-	Write-Host $ResultCpuUsage
-	Write-Host $ResultDiskUsage
 	Write-Host $ResultSysInfo
 	Write-Host $ResultNetInfo
 	Write-Host $ResultMemInfo
@@ -179,9 +88,6 @@ Function Show-Info {
 # Funcion para escribir en el archivo de registro
 Function Write-LogFile {
 	# Out-File -FilePath "C:\ruta\al\archivo.txt" -InputObject $resultado
-    Add-Content $logPath $ResultSumSysRes
-	Add-Content $logPath $ResultCpuUsage
-    Add-Content $logPath $ResultDiskUsage
     Add-Content $logPath $ResultSysInfo
     Add-Content $logPath $ResultNetInfo
 	Add-Content $logPath $ResultMemInfo
@@ -196,9 +102,6 @@ if (!(Test-Path $logFolder)) {
 }
 
 # Ejecucion de las siguientes funciones
-Get-SumSysRes
-Get-CpuUsage
-Get-DiskUsage
 Get-SysInfo
 Get-NetInfo
 Get-MemInfo
