@@ -80,7 +80,7 @@ function enDisUser {
 	# Obtenga la lista de cuentas de usuario deshabilitadas.
 	Search-ADAccount -AccountDisabled | select Name, SamAccountName
 	Write-Host "¿Desea activar la cuenta del usuario $USUARIO?"
-	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
 		Write-Host "Activando la cuenta del usuario $USUARIO"
@@ -104,7 +104,7 @@ function unUser {
 	# Obtenga la lista de cuentas de usuario bloqueadas.
 	Search-ADAccount -LockedOut | select Name, SamAccountName
 	Write-Host "¿Desea Desbloquear la cuenta del usuario $USUARIO?"
-	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
 		Write-Host "Desbloqueando la cuenta del usuario $USUARIO"
@@ -312,7 +312,7 @@ function modUser {
 	# Obtenga la lista de cuentas de usuario deshabilitadas.
 	Search-ADAccount -AccountDisabled | select Name, SamAccountName
 	Write-Host "¿Desea activar la cuenta del usuario $USUARIO?"
-	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
 		Write-Host "Activando la cuenta del usuario $USUARIO"
@@ -334,7 +334,7 @@ function modUser {
 	# Obtenga la lista de cuentas de usuario bloqueadas.
 	Search-ADAccount -LockedOut | select Name, SamAccountName
 	Write-Host "¿Desea Desbloquear la cuenta del usuario $USUARIO?"
-	$OK = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
+	$RESPUESTA = Read-Host "[y] Yes  [n] No: (por defecto es "n")"
 	if ( "$RESPUESTA" -Match "y" ) {
 		Write-Host "Ha seleccionado la opcion [y]"
 		Write-Host "Desbloqueando la cuenta del usuario $USUARIO"
