@@ -22,13 +22,17 @@ Function Restore-AllUsers {
 	# Iteramos por cada usuario y realizamos las comprobaciones necesarias antes de recuperar la copia de seguridad
 	foreach ($user in $users) {
 		# Comprobamos que el usuario exista en el sistema
-		if (-not (Get-ADUser -Filter {SamAccountName -eq $user})) {
+		# if (-not (Get-ADUser -Filter {SamAccountName -eq $user})) {
+		$ErrorActionPreference = "SilentlyContinue"
+		if (-not (Get-LocalUser -Name "$user")) {
 			Write-Host "El usuario '$user' no existe en el sistema. No se recuperara la copia de seguridad."
 			continue
 		}
 		
 		# Comprobamos que el usuario tenga un directorio de inicio
-		$userFolder = (Get-ADUser -Identity $user -Properties Homedirectory).Homedirectory
+		# $userFolder = (Get-ADUser -Identity $user -Properties Homedirectory).Homedirectory
+		$usersPath = "C:\Users"
+		$userFolder = Join-Path $usersPath "$user"
 		if (-not $userFolder) {
 			Write-Host "El usuario '$user' no tiene un directorio de inicio. No se recuperara la copia de seguridad."
 			continue
@@ -43,7 +47,8 @@ Function Restore-AllUsers {
 		}
 		
 		# Comprobamos que el directorio de backup exista
-		$backupPath = Join-Path $userFolder "backup"
+		# $backupPath = Join-Path $userFolder "backup"
+		$backupPath = "C:\UserBackups"
 		if (-not (Test-Path $backupPath)) {
 			Write-Host "No se ha encontrado el directorio de backup del usuario '$user'. No se recuperara la copia de seguridad."
 			continue
@@ -57,11 +62,13 @@ Function Restore-AllUsers {
 		}
 		
 		# Recuperamos la copia de seguridad
-		$recoveryPath = Join-Path $userFolder "backup-restore"
+		# $recoveryPath = Join-Path $userFolder "backup-restore"
+		$recoveryDate = Get-Date -Format "yyyyMMdd-HHmmss"
+		$recoveryPath = Join-Path "C:\UserRecovery" "recovery-$user-$recoveryDate"
 		if (-not (Test-Path $recoveryPath)) {
 			New-Item -ItemType Directory -Path $recoveryPath | Out-Null
 		}
-		Expand-Archive -Path $backupFile.FullName -DestinationPath $recoveryPath -Force
+		Expand-Archive -Path $backupFile -DestinationPath $recoveryPath -Force
 		Write-Host "Se ha recuperado la copia de seguridad del usuario '$user' en el directorio '$recoveryPath'."
 	}
 }

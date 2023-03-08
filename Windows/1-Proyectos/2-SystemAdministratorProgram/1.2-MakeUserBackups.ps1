@@ -7,28 +7,8 @@
 # Limpiar la pantalla al lanzar el menu
 Clear-Host
 
-# Variables globales
-# $backupPath = "C:\UserBackups"
-# $restorePath = "C:\UserRestores"
-
 # Funcion para hacer una copia de seguridad de un usuario
 function Backup-Users {
-    # param (
-        # [Parameter(Mandatory = $true)]
-        # [string]$user
-    # )
-
-    # Crear la carpeta de la copia de seguridad
-    # $userBackupPath = Join-Path -Path $backupPath -ChildPath $user
-    # New-Item -ItemType Directory -Path $userBackupPath -Force
-
-    # Obtener la ruta de la carpeta del usuario
-    # $userFolderPath = Join-Path -Path "C:\Users" -ChildPath $user
-
-    # Copiar la carpeta del usuario a la carpeta de la copia de seguridad
-    # Copy-Item -Path $userFolderPath -Destination $userBackupPath -Recurse -Force
-	
-
 	# Pedimos al usuario que introduzca los nombres de los usuarios separados por espacio
 	$users = Read-Host "Introduce los nombres de los usuarios separados por espacios"
 
@@ -38,13 +18,17 @@ function Backup-Users {
 	# Iteramos por cada usuario y realizamos las comprobaciones necesarias antes de hacer la copia de seguridad
 	foreach ($user in $users) {
 		# Comprobamos que el usuario exista en el sistema
-		if (-not (Get-ADUser -Filter {SamAccountName -eq $user})) {
+		# if (-not (Get-ADUser -Filter {SamAccountName -eq $user})) {
+		$ErrorActionPreference = "SilentlyContinue"
+		if (-not (Get-LocalUser -Name "$user")) {
 			Write-Host "El usuario '$user' no existe en el sistema. No se realizara la copia de seguridad."
 			continue
-		}
+		} 
 		
 		# Comprobamos que el usuario tenga un directorio de inicio
-		$userFolder = (Get-ADUser -Identity $user -Properties Homedirectory).Homedirectory
+		# $userFolder = (Get-ADUser -Identity $user -Properties Homedirectory).Homedirectory
+		$usersPath = "C:\Users"
+		$userFolder = Join-Path $usersPath "$user"
 		if (-not $userFolder) {
 			Write-Host "El usuario '$user' no tiene un directorio de inicio. No se realizara la copia de seguridad."
 			continue
@@ -59,7 +43,8 @@ function Backup-Users {
 		}
 		
 		# Creamos el directorio de backup en el directorio de inicio del usuario
-		$backupPath = Join-Path $userFolder "backup"
+		# $backupPath = Join-Path $userFolder "backup"
+		$backupPath = "C:\UserBackups"
 		if (-not (Test-Path $backupPath)) {
 			New-Item -ItemType Directory -Path $backupPath | Out-Null
 		}
@@ -85,7 +70,4 @@ function Backup-Users {
 # Ejecucion de las siguientes funciones
 Backup-Users
 
-# Hacer una copia de seguridad de un usuario
-# $user = "usuario1"
-# Backup-User -user $user
 
