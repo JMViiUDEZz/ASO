@@ -35,8 +35,9 @@ Function Get-SysInfo {
 		Sistema operativo: $($osInfo.Caption) $($osInfo.Version)
 		Procesador: $($processorInfo.Name)
 		Memoria fisica total: $([math]::Round($memoryInfo.Capacity / 1GB, 2)) GB"
-		
+	# Mostrar la informacion		
 	Write-Host $ResultSysInfo
+	# Escribir en el archivo de registro
 	Add-Content $logPath $ResultSysInfo
 }
 
@@ -50,8 +51,9 @@ Function Get-NetInfo {
 		Direccion IP: $($networkAdapterInfo.IPAddress[0])
 		Mascara de subred: $($networkAdapterInfo.IPSubnet[0])
 		Puerta de enlace predeterminada: $($networkAdapterInfo.DefaultIPGateway[0])"
-
+	# Mostrar la informacion
 	Write-Host $ResultNetInfo
+	# Escribir en el archivo de registro
 	Add-Content $logPath $ResultNetInfo
 }
 
@@ -64,7 +66,9 @@ Function Get-MemInfo {
 	$ResultMemInfo = "`nInformacion de memoria:`n
 		Memoria fisica en uso: $([math]::Round($memoryUsage / 1GB, 2)) GB
 		Porcentaje de uso de la memoria fisica: $memoryUsagePercentage%"
+	# Mostrar la informacion
 	Write-Host $ResultMemInfo
+	# Escribir en el archivo de registro
 	Add-Content $logPath $ResultMemInfo
 }
 
@@ -83,25 +87,10 @@ Function Get-DiskInfo {
 	Espacio libre: $freeSpace GB
 	Espacio usado: $usedSpace GB
 	`nFin del monitoreo de recursos, puedes consultarlo en $logPath...`n"
+	# Mostrar la informacion
 	Write-Host $ResultSysInfo
+	# Escribir en el archivo de registro
 	Add-Content $logPath $ResultDiskInfo
-}
-
-# Funcion para mostrar la informacion
-Function Show-Info {
-	Write-Host $ResultSysInfo
-	Write-Host $ResultNetInfo
-	Write-Host $ResultMemInfo
-	Write-Host $ResultDiskInfo
-}
-
-# Funcion para escribir en el archivo de registro
-Function Write-LogFile {
-	# Out-File -FilePath "C:\ruta\al\archivo.txt" -InputObject $resultado
-    Add-Content $logPath $ResultSysInfo
-    Add-Content $logPath $ResultNetInfo
-	Add-Content $logPath $ResultMemInfo
-    Add-Content $logPath $ResultDiskInfo
 }
 
 # Crear la carpeta si no existe
@@ -116,5 +105,3 @@ Get-SysInfo
 Get-NetInfo
 Get-MemInfo
 Get-DiskInfo
-# Show-Info
-# Write-LogFile
