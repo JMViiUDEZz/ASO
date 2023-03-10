@@ -28,13 +28,16 @@ Function Get-SysInfo {
 	$diskInfo = Get-WmiObject -Class Win32_LogicalDisk
 	
 	# Mostrar informacion del sistema
-	$ResultSysInfo = Write-Host "`nInformacion del sistema:`n
+	$ResultSysInfo = "`nInformacion del sistema:`n
 		Nombre de la computadora: $($systemInfo.Name)
 		Fabricante del sistema: $($systemInfo.Manufacturer)
 		Modelo del sistema: $($systemInfo.Model)
 		Sistema operativo: $($osInfo.Caption) $($osInfo.Version)
 		Procesador: $($processorInfo.Name)
 		Memoria fisica total: $([math]::Round($memoryInfo.Capacity / 1GB, 2)) GB"
+		
+	Write-Host $ResultSysInfo
+	Add-Content $logPath $ResultSysInfo
 }
 
 Function Get-NetInfo {
@@ -43,11 +46,13 @@ Function Get-NetInfo {
 	$networkAdapterSpeed = Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionStatus -eq 2 } | Select-Object -ExpandProperty Speed
 	
 	# Velocidad de la conexion: $([math]::Round($networkAdapterSpeed / 1MB, 2)) MB/s
-	$ResultNetInfo = Write-Host "`nInformacion de red:`n
+	$ResultNetInfo = "`nInformacion de red:`n
 		Direccion IP: $($networkAdapterInfo.IPAddress[0])
 		Mascara de subred: $($networkAdapterInfo.IPSubnet[0])
 		Puerta de enlace predeterminada: $($networkAdapterInfo.DefaultIPGateway[0])"
 
+	Write-Host $ResultNetInfo
+	Add-Content $logPath $ResultNetInfo
 }
 
 Function Get-MemInfo {
@@ -56,9 +61,11 @@ Function Get-MemInfo {
 	$totalMemory = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty TotalPhysicalMemory
 	$memoryUsagePercentage = [math]::Round(($totalMemory - $memoryUsage) / $totalMemory * 100, 2)
 	
-	$ResultMemInfo = Write-Host "`nInformacion de memoria:`n
+	$ResultMemInfo = "`nInformacion de memoria:`n
 		Memoria fisica en uso: $([math]::Round($memoryUsage / 1GB, 2)) GB
 		Porcentaje de uso de la memoria fisica: $memoryUsagePercentage%"
+	Write-Host $ResultMemInfo
+	Add-Content $logPath $ResultMemInfo
 }
 
 # Funcion para obtener la informacion del disco
@@ -71,11 +78,13 @@ Function Get-DiskInfo {
     }
 	
 	# Mostrar informacion del disco
-	$ResultDiskInfo = Write-Host "`nInformacion del disco:`n
+	$ResultDiskInfo = "`nInformacion del disco:`n
 	Tamano: $diskSize GB
 	Espacio libre: $freeSpace GB
 	Espacio usado: $usedSpace GB
 	`nFin del monitoreo de recursos, puedes consultarlo en $logPath...`n"
+	Write-Host $ResultSysInfo
+	Add-Content $logPath $ResultDiskInfo
 }
 
 # Funcion para mostrar la informacion
@@ -107,5 +116,5 @@ Get-SysInfo
 Get-NetInfo
 Get-MemInfo
 Get-DiskInfo
-Show-Info
-Write-LogFile
+# Show-Info
+# Write-LogFile

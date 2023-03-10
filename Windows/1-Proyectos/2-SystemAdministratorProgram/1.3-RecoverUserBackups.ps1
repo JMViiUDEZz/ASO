@@ -55,7 +55,7 @@ Function Restore-AllUsers {
 		}
 		
 		# Buscamos el archivo de backup mas reciente
-		$backupFile = Get-ChildItem $backupPath -Filter "backup-$user-*.zip" | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1
+		$backupFile = Join-Path $backupPath (Get-ChildItem $backupPath -Filter "backup-$user-*.zip" | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1).Name
 		if (-not $backupFile) {
 			Write-Host "No se ha encontrado ningun archivo de backup para el usuario '$user'. No se recuperara la copia de seguridad."
 			continue
